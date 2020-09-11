@@ -1,0 +1,13 @@
+jdk:
+- openjdk8
+dist: xenial
+android:
+  components:
+  - android-29
+  - build-tools-29.0.2
+
+script:
+- cd ../Mindustry
+- "./gradlew test"
+- "./gradlew desktop:dist -Pbuildversion=${TRAVIS_TAG:1}"
+- "./gradlew server:dist -Pbuildversion=${TRAVIS_TAG:1}"
