@@ -3,14 +3,11 @@ package mindustry.ui.dialogs;
 import arc.*;
 import arc.graphics.*;
 import arc.input.*;
-import arc.scene.style.*;
 import arc.math.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
-import arc.struct.*;
 import arc.util.*;
 import mindustry.*;
-import mindustry.game.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -22,8 +19,6 @@ import static mindustry.Vars.*;
 
 public class MapsDialog extends FloatingDialog{
     private FloatingDialog dialog;
-    private String search = "";
-    private ObjectSet<Gamemode> modeFilter = new ObjectSet<>();
 
     public MapsDialog(){
         super("$maps");
@@ -46,8 +41,6 @@ public class MapsDialog extends FloatingDialog{
     }
 
     void setup(){
-        search = "";
-        Runnable[] rebuildPane = {null};
         buttons.clearChildren();
 
         if(Core.graphics.isPortrait()){
@@ -123,6 +116,8 @@ public class MapsDialog extends FloatingDialog{
         }).size(210f, 64f);
 
 
+        cont.clear();
+
         Table maps = new Table();
         maps.marginRight(24);
 
@@ -132,82 +127,34 @@ public class MapsDialog extends FloatingDialog{
         int maxwidth = Mathf.clamp((int)(Core.graphics.getWidth() / Scl.scl(230)), 1, 8);
         float mapsize = 200f;
 
-        Table searchBar = new Table();
-        searchBar.addField(search, res -> {
-            search = res;
-            rebuildPane[0].run();
-        });
-        int ii = 0;
-        Table modes = new Table();
-        modes.label(() -> "$editor.filter");
-        for(Gamemode mode : Gamemode.values()){
-            if(mode.hidden || mode == Gamemode.sandbox) continue;
+        int i = 0;
+        for(Map map : Vars.maps.all()){
 
-            // modes.button(mode.toString(), Styles.togglet, () -> {
-            TextureRegionDrawable icon = ui.getIcon("mode" + Strings.capitalize(mode.name()) + "Small");
-            modes.addImageButton(icon, Styles.clearTogglePartiali, () -> {
-                if(modeFilter.contains(mode))
-                    modeFilter.remove(mode);
-                else
-                    modeFilter.add(mode);
-                rebuildPane[0].run();
-            }).size(65f,65f);
-            // }).size(140f,54f);
+            if(i % maxwidth == 0){
+                maps.row();
+            }
+
+            TextButton button = maps.addButton("", Styles.cleart, () -> showMapInfo(map)).width(mapsize).pad(8).get();
+            button.clearChildren();
+            button.margin(9);
+            button.add(map.name()).width(mapsize - 18f).center().get().setEllipsis(true);
+            button.row();
+            button.addImage().growX().pad(4).color(Pal.gray);
+            button.row();
+            button.stack(new Image(map.safeTexture()).setScaling(Scaling.fit), new BorderImage(map.safeTexture()).setScaling(Scaling.fit)).size(mapsize - 20f);
+            button.row();
+            button.add(map.custom ? "$custom" : map.workshop ? "$workshop" : map.mod != null ? "[lightgray]" + map.mod.meta.displayName() : "$builtin").color(Color.gray).padTop(3);
+
+            i++;
         }
 
-        cont.top();
-        cont.clear();
+        if(Vars.maps.all().size == 0){
+            maps.add("$maps.none");
+        }
 
         cont.add(buttons).growX();
         cont.row();
         cont.add(pane).uniformX();
-        cont.table(t -> {
-            t.addImage(Icon.zoom);
-            t.add(searchBar);
-            if(Core.graphics.isPortrait()) t.row();
-            t.table(s -> s.add(modes)).margin(5f).marginRight(0f).marginLeft(25f).growX();
-        });
-        cont.row();
-        rebuildPane[0] = () -> {
-            maps.clear();
-
-            int i = 0;
-            for(Map map : Vars.maps.all()){
-                if(!search.isEmpty() && !map.name().toLowerCase().contains(search.toLowerCase())) continue;
-                if(!modeFilter.isEmpty()){
-                    boolean valid = true;
-                    for(Gamemode mode : modeFilter){
-                        if(!valid) continue;
-                        valid = mode.valid(map);
-                    }
-                    if(!valid) continue;
-                }
-
-                if(i % maxwidth == 0){
-                    maps.row();
-                }
-
-                TextButton button = maps.addButton("", Styles.cleart, () -> showMapInfo(map)).width(mapsize).pad(8).get();
-                button.clearChildren();
-                button.margin(9);
-                button.add(map.name()).width(mapsize - 18f).center().get().setEllipsis(true);
-                button.row();
-                button.addImage().growX().pad(4).color(Pal.gray);
-                button.row();
-                button.stack(new Image(map.safeTexture()).setScaling(Scaling.fit), new BorderImage(map.safeTexture()).setScaling(Scaling.fit)).size(mapsize - 20f);
-                button.row();
-                button.add(map.custom ? "$custom" : map.workshop ? "$workshop" : map.mod != null ? "[lightgray]" + map.mod.meta.displayName() : "$builtin").color(Color.gray).padTop(3);
-
-                i++;
-            }
-
-            if(Vars.maps.all().size == 0){
-                maps.add("$maps.none");
-            }
-
-        };
-
-        rebuildPane[0].run();
     }
 
     void showMapInfo(Map map){
