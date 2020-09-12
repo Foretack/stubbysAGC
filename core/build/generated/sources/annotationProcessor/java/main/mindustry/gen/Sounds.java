@@ -21,10 +21,6 @@ public class Sounds {
 
   public static Sound buttonClick = new arc.mock.MockSound();
 
-  public static Sound citadelAlert = new arc.mock.MockSound();
-
-  public static Sound citadelAlert2 = new arc.mock.MockSound();
-
   public static Sound click = new arc.mock.MockSound();
 
   public static Sound conveyor = new arc.mock.MockSound();
@@ -34,8 +30,6 @@ public class Sounds {
   public static Sound door = new arc.mock.MockSound();
 
   public static Sound drill = new arc.mock.MockSound();
-
-  public static Sound eHit = new arc.mock.MockSound();
 
   public static Sound empty = new arc.mock.MockSound();
 
@@ -70,8 +64,6 @@ public class Sounds {
   public static Sound press = new arc.mock.MockSound();
 
   public static Sound release = new arc.mock.MockSound();
-
-  public static Sound reprogramming = new arc.mock.MockSound();
 
   public static Sound respawn = new arc.mock.MockSound();
 
@@ -111,14 +103,11 @@ public class Sounds {
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/break.ogg" : "sounds/break.mp3", arc.audio.Sound.class).loaded = a -> breaks = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/build.ogg" : "sounds/build.mp3", arc.audio.Sound.class).loaded = a -> build = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/buttonClick.ogg" : "sounds/buttonClick.mp3", arc.audio.Sound.class).loaded = a -> buttonClick = (arc.audio.Sound)a;
-    arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/citadelAlert.ogg" : "sounds/citadelAlert.mp3", arc.audio.Sound.class).loaded = a -> citadelAlert = (arc.audio.Sound)a;
-    arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/citadelAlert2.ogg" : "sounds/citadelAlert2.mp3", arc.audio.Sound.class).loaded = a -> citadelAlert2 = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/click.ogg" : "sounds/click.mp3", arc.audio.Sound.class).loaded = a -> click = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/conveyor.ogg" : "sounds/conveyor.mp3", arc.audio.Sound.class).loaded = a -> conveyor = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/corexplode.ogg" : "sounds/corexplode.mp3", arc.audio.Sound.class).loaded = a -> corexplode = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/door.ogg" : "sounds/door.mp3", arc.audio.Sound.class).loaded = a -> door = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/drill.ogg" : "sounds/drill.mp3", arc.audio.Sound.class).loaded = a -> drill = (arc.audio.Sound)a;
-    arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/eHit.ogg" : "sounds/eHit.mp3", arc.audio.Sound.class).loaded = a -> eHit = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/empty.ogg" : "sounds/empty.mp3", arc.audio.Sound.class).loaded = a -> empty = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/eSwing.ogg" : "sounds/eSwing.mp3", arc.audio.Sound.class).loaded = a -> eSwing = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/explosion.ogg" : "sounds/explosion.mp3", arc.audio.Sound.class).loaded = a -> explosion = (arc.audio.Sound)a;
@@ -136,7 +125,6 @@ public class Sounds {
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/place.ogg" : "sounds/place.mp3", arc.audio.Sound.class).loaded = a -> place = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/press.ogg" : "sounds/press.mp3", arc.audio.Sound.class).loaded = a -> press = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/release.ogg" : "sounds/release.mp3", arc.audio.Sound.class).loaded = a -> release = (arc.audio.Sound)a;
-    arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/reprogramming.ogg" : "sounds/reprogramming.mp3", arc.audio.Sound.class).loaded = a -> reprogramming = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/respawn.ogg" : "sounds/respawn.mp3", arc.audio.Sound.class).loaded = a -> respawn = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/respawning.ogg" : "sounds/respawning.mp3", arc.audio.Sound.class).loaded = a -> respawning = (arc.audio.Sound)a;
     arc.Core.assets.load(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/shoot.ogg" : "sounds/shoot.mp3", arc.audio.Sound.class).loaded = a -> shoot = (arc.audio.Sound)a;
@@ -171,10 +159,6 @@ public class Sounds {
     build = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/buttonClick.ogg" : "sounds/buttonClick.mp3");
     buttonClick = null;
-    arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/citadelAlert.ogg" : "sounds/citadelAlert.mp3");
-    citadelAlert = null;
-    arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/citadelAlert2.ogg" : "sounds/citadelAlert2.mp3");
-    citadelAlert2 = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/click.ogg" : "sounds/click.mp3");
     click = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/conveyor.ogg" : "sounds/conveyor.mp3");
@@ -185,8 +169,6 @@ public class Sounds {
     door = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/drill.ogg" : "sounds/drill.mp3");
     drill = null;
-    arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/eHit.ogg" : "sounds/eHit.mp3");
-    eHit = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/empty.ogg" : "sounds/empty.mp3");
     empty = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/eSwing.ogg" : "sounds/eSwing.mp3");
@@ -221,8 +203,6 @@ public class Sounds {
     press = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/release.ogg" : "sounds/release.mp3");
     release = null;
-    arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/reprogramming.ogg" : "sounds/reprogramming.mp3");
-    reprogramming = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/respawn.ogg" : "sounds/respawn.mp3");
     respawn = null;
     arc.Core.assets.unload(arc.Core.app.getType() != arc.Application.ApplicationType.iOS ? "sounds/respawning.ogg" : "sounds/respawning.mp3");

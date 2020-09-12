@@ -155,12 +155,11 @@ public class MapsDialog extends FloatingDialog{
             // }).size(140f,54f);
         }
 
-        cont.top();
+        cont.left();
         cont.clear();
 
         cont.add(buttons).growX();
         cont.row();
-        cont.add(pane).uniformX();
         cont.table(t -> {
             t.addImage(Icon.zoom);
             t.add(searchBar);
@@ -168,6 +167,7 @@ public class MapsDialog extends FloatingDialog{
             t.table(s -> s.add(modes)).margin(5f).marginRight(0f).marginLeft(25f).growX();
         });
         cont.row();
+        cont.add(pane).uniformX();
         rebuildPane[0] = () -> {
             maps.clear();
 
