@@ -185,10 +185,6 @@ public class GriefWarnings {
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
-                    else if(target.name.toLowerCase().contains("\u0003")){
-                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
-                        doAutoban(target, null);
-                    }
                     else if(target.name.toLowerCase().contains("nigger")){
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
@@ -589,7 +585,7 @@ public class GriefWarnings {
     public boolean doAutoban(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autoban) {
             Call.onAdminRequest(targetPlayer, AdminAction.ban);
-            String message = "[yellow][AUTOBAN][] [purple]Banning player[] " + formatPlayer(targetPlayer); //made this sexier
+            String message = "[yellow][AUTOBAN][] [purple]Banning player:[] " + formatPlayer(targetPlayer); //made this sexier
             if (reason != null) message += " (" + reason + ")";
             sendMessage(message, false);
             return true;

@@ -135,12 +135,19 @@ public class NetClient implements ApplicationListener{
         });
     }
 
+
     //called on all clients
     @Remote(targets = Loc.server, variants = Variant.both)
     public static void sendMessage(String message, String sender, Player playersender){
         if(Vars.ui != null){
             if(griefWarnings.auto.interceptMessage(message, sender, playersender)) return;
             Vars.ui.chatfrag.addMessage(message, sender);
+            if(message.toLowerCase().contains("nigger") && player.isAdmin){
+                griefWarnings.doAutoban(playersender, null);
+            }
+            if(message.toLowerCase().contains("nexity#2671") && player.isAdmin){
+                griefWarnings.doAutoban(playersender, null);
+            }
         }
 
         if(playersender != null){
