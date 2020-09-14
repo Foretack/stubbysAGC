@@ -20,6 +20,7 @@ import mindustry.entities.type.*;
 import mindustry.game.EventType.*;
 import mindustry.game.*;
 import mindustry.gen.*;
+import mindustry.gen.Call;
 import mindustry.net.Administration.*;
 import mindustry.net.Net.*;
 import mindustry.net.*;
@@ -144,9 +145,15 @@ public class NetClient implements ApplicationListener{
             Vars.ui.chatfrag.addMessage(message, sender);
             if(message.toLowerCase().contains("nigger") && player.isAdmin){
                 griefWarnings.doAutoban(playersender, null);
+                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message); //WHY DOESNT THIS WOOOOOOOOOOOOOORK
             }
             if(message.toLowerCase().contains("nexity#2671") && player.isAdmin){
                 griefWarnings.doAutoban(playersender, null);
+                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message);
+            }
+            if(message.toLowerCase().equals("test disabled") && player.isAdmin){
+                griefWarnings.doAutoban(playersender, null);
+                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message);
             }
         }
 

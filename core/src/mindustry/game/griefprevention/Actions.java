@@ -175,7 +175,7 @@ public class Actions {
         public String toString() {
             String itemIcon;        //This is probably the worst way to do it, but hey, as long as it works
             if(beforeConfig == -1){
-                itemIcon = "[lightgray]none"; //previous one was showing to unloaders as well, didn't fit well
+                itemIcon = "[lightgray]none[]"; //previous one was showing to unloaders as well, didn't fit well
             }else if(beforeConfig == 0){
                 itemIcon = "\uF838";
             }else if(beforeConfig == 1){
@@ -211,7 +211,7 @@ public class Actions {
             }
             String itemIconAfter;
             if(afterConfig == -1){
-                itemIconAfter = "[lightgray]none";
+                itemIconAfter = "[lightgray]none[]";
             }else if(afterConfig == 0){
                 itemIconAfter = "\uF838";
             }else if(afterConfig == 1){

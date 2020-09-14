@@ -63,6 +63,7 @@ public class GriefWarnings {
 
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
+    public boolean loggingChat;
     public Auto auto;
     public RefList refs = new RefList();
     public ActionLog actionLog = new ActionLog();
@@ -191,6 +192,7 @@ public class GriefWarnings {
                     }
                     //have yet to test if this works on the name changing fuckers
                     //UPDATE: it doesn't
+                    //UPDATE2: nvm it does
                     else if(target.name.toLowerCase().contains("�")){
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
@@ -622,5 +624,6 @@ public class GriefWarnings {
     public void loadComplete() {
         auto = new Auto();
     }
+
     //sex
 }
