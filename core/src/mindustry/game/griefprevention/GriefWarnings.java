@@ -190,6 +190,10 @@ public class GriefWarnings {
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
+                    else if(target.name.toLowerCase().contains("XdDoS")){
+                            Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                            doAutoban(target, null);
+                        }
                     //have yet to test if this works on the name changing fuckers
                     //UPDATE: it doesn't
                     //UPDATE2: nvm it does
