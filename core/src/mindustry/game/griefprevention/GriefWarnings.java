@@ -61,6 +61,8 @@ public class GriefWarnings {
     /** whether to log every action captured by the action log */
     public boolean logActions = false;
 
+    public Tile lastalerttile;
+
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
     public boolean loggingChat;
@@ -242,6 +244,7 @@ public class GriefWarnings {
                     Math.round(coreDistance) + "[] blocks from core. [stat]" + Math.round(progress * 100) + "%";
             sendMessage(message);
             didWarn = true;
+            lastalerttile = tile;
         }else if (coreDistance < 0 && cblock instanceof ItemLiquidGenerator) {
             String message = "[scarlet]WARNING[] " + formatPlayer(builder) + " is building a generator [stat]" +
                     Math.round(coreDistance) + "[] blocks from core. [stat]" + Math.round(progress * 100) + "%";
@@ -282,6 +285,7 @@ public class GriefWarnings {
                             " is building a reactor at " + formatTile(tile);
                         sendMessage(message, false);
 						Sounds.hint.play();
+						lastalerttile = tile;
                     }
                 }
             }
@@ -334,6 +338,7 @@ public class GriefWarnings {
 		if (coreDistance < 6 && cblock instanceof Vault) {
             String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
             sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
+            lastalerttile = tile;
         }
     }
 
@@ -406,6 +411,7 @@ public class GriefWarnings {
                 targetPlayer.id + "[]) transfers  to a reactor. " + formatTile(tile);
             sendMessage(message);
 			Sounds.hint.play();
+			lastalerttile = tile;
         }
         //Imagine having warnings for blast transfers. Like, who cares?
     }
@@ -501,6 +507,7 @@ public class GriefWarnings {
             sendMessage("[yellow][] Power split by " + formatPlayer(targetPlayer) + " " + formatTile(tile));
 			//i need better sounds, this is slightly annoying
             Sounds.eSwing.play();
+            lastalerttile = tile;
         }
     }
 
@@ -579,6 +586,7 @@ public class GriefWarnings {
         if (heat > 0.5f && tile.interactable(player.getTeam())) {
             //STOP SPAMMING THE FUCKING CHAT
             sendMessage("[orange][]  " + formatTile(tile) + " is overheating!");
+            lastalerttile = tile;
         }
     }
 

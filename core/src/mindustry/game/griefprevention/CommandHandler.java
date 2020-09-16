@@ -86,6 +86,8 @@ public class CommandHandler {
         addCommand("copyga", this::copyga);
         //addCommand ("report", this::report);
         addCommand("rebuild", this::rebuild);
+        addCommand("lastalert", this::lastalert);
+        addCommand("la", this::lastalert);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -830,6 +832,14 @@ public class CommandHandler {
 
         reply("[cyan]Showing player[] " + griefWarnings.formatPlayer(target));
         griefWarnings.auto.setFreecam(true, target.x, target.y);
+    }
+    public void lastalert(CommandContext ctx) {
+            Tile tile = griefWarnings.lastalerttile;
+            if (tile != null) {
+                reply("[cyan]Showing tile[] " + griefWarnings.formatTile(tile));
+                griefWarnings.auto.setFreecam(true, tile.getX(), tile.getY());
+                return;
+            }
     }
 
     /**

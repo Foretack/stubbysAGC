@@ -1,6 +1,8 @@
 # stubbysAGC
  100% less agc 100% more virus
 
+New command: /lastalert or /la -> sets freecam on the location of the last alert
+
 /show -> /s
 
 /getactions -> /ga
@@ -29,7 +31,7 @@
 
 /autotrace runs on people without showing their trace upon join
 
-/autoban will automatically ban people who have "nexit", "nigger", "volas" in their names(requires admin duh). and will send their name and trace to /d
+/autoban will automatically ban people who have "nexit", "nigger", "volas" in their names(requires admin duh), and people who say "nigger", "nexity#2671" and "test disabled" in chat. Will send their name and trace(trace only for join bans) to /d
 
 some sprites are changed
 
