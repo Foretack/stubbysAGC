@@ -354,7 +354,7 @@ public class CommandHandler {
                 }
                 target = playerGroup.getByID(id);
             } else {
-                target = playerGroup.find(p -> p.name.replaceAll("\\[[^]]*]", "").trim().toLowerCase().startsWith(((name))));
+                target = playerGroup.find(p -> p.name.replaceAll("\\[[^]]*]", "").replaceAll("[\uE800\uE813\uE809\uE80F\uE814\uE828]", "").trim().toLowerCase().startsWith(((name))));
             }
         return target;
     }
