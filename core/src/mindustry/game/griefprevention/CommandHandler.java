@@ -69,7 +69,7 @@ public class CommandHandler {
         addCommand("autotrace", settingsToggle("autotrace", "automatic trace", v -> griefWarnings.autotrace = v));
         addCommand("auto", this::auto);
         addCommand("a", this::auto);
-        //might bind this onto a button someday
+        //bad idea
         addCommand("nextwave", this::nextwave);
         addCommand("playerinfo", this::playerInfo);
         addCommand("pi", this::playerInfo); // playerinfo takes too long to type
@@ -88,6 +88,8 @@ public class CommandHandler {
         addCommand("rebuild", this::rebuild);
         addCommand("lastalert", this::lastalert);
         addCommand("la", this::lastalert);
+        addCommand("mute", this::mute);
+        addCommand("unmute", this::unmute);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -441,6 +443,15 @@ public class CommandHandler {
     /**
      * Control the auto mode
      */
+    public void mute(CommandContext ctx){
+        griefWarnings.mute = true;
+        reply("[sky]Muted");
+    }
+    public void unmute(CommandContext ctx){
+        griefWarnings.mute = false;
+        reply("[sky]Unmuted");
+    }
+
     public void auto(CommandContext ctx) {
         if (ctx.args.size() < 2) {
             reply("[orange]Not enough arguments");
@@ -776,6 +787,31 @@ public class CommandHandler {
             }
             reply("automatically picking up item " + item.name + " from tile " + griefWarnings.formatTile(tile));
             break;
+        }
+        case "6": {
+            boolean persist = false;
+            if (ctx.args.contains("p")){
+                persist = true;
+                reply("[slate]Using persist mode");
+            }
+            if (ctx.args.contains("la")){
+                Tile tile = griefWarnings.lastalerttile;
+                auto.gotoTile(tile, persist ? 0f : 50f);
+                auto.persist = persist;
+                reply("[cyan]going to tile[] " + griefWarnings.formatTile(tile));
+                break;
+            }
+            else {
+                Tile tile = getCursorTile();
+                if (tile == null) {
+                    reply("[orange]Invalid tile");
+                    return;
+                }
+                auto.gotoTile(tile, persist ? 0f : 50f);
+                auto.persist = persist;
+                reply("[cyan]going to tile[] " + griefWarnings.formatTile(tile));
+                break;
+            }
         }
         default:
             reply("unknown subcommand");

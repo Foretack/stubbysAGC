@@ -10,6 +10,7 @@ import arc.util.Log;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
+import mindustry.game.EventType;
 import mindustry.gen.*;
 import mindustry.entities.type.Player;
 import mindustry.entities.type.Unit;
@@ -62,10 +63,9 @@ public class GriefWarnings {
     public boolean logActions = false;
 
     public Tile lastalerttile;
-
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
-    public boolean loggingChat;
+    public boolean mute;
     public Auto auto;
     public RefList refs = new RefList();
     public ActionLog actionLog = new ActionLog();
@@ -103,7 +103,7 @@ public class GriefWarnings {
     public boolean sendMessage(String message, boolean throttled) {
         // if (!net.active()) return false;
         //imagine having a message spam chat when it's about chat spam
-        if (message.length() > maxTextLength) {
+        if (message.length() > maxTextLength && !mute) {
             ui.chatfrag.addMessage(
                     "[scarlet][yellow] Warnings exceeded allowed chat length!",
                     null);
@@ -207,6 +207,13 @@ public class GriefWarnings {
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
+                    /*Events.on(EventType.PlayerJoin.class, event -> {
+                        for(Player p: playerGroup.all())
+                            if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
+                                sendLocal("[yellow]SECURITY ALERT![] duplicate IP detected");
+                            }
+                    });*/
+
                 });
             }
             else {
@@ -239,7 +246,7 @@ public class GriefWarnings {
         float coreDistance = getDistanceToCore(builder, tile);
         // persistent warnings that keep showing
         //this is fucking annoying
-        if (coreDistance < 12 && cblock instanceof NuclearReactor) {
+        if (coreDistance < 12 && cblock instanceof NuclearReactor && !mute) {
             String message = "[scarlet][] " + formatPlayer(builder) + " is building a reactor [stat]" +
                     Math.round(coreDistance) + "[] blocks from core. [stat]" + Math.round(progress * 100) + "%";
             sendMessage(message);
@@ -280,7 +287,7 @@ public class GriefWarnings {
                             break;
                         }
                     }
-                    if (!hasCryo) {
+                    if (!hasCryo && !mute) {
                         String message = "[orange][] " + formatPlayer(builder) +
                             " is building a reactor at " + formatTile(tile);
                         sendMessage(message, false);
@@ -335,7 +342,7 @@ public class GriefWarnings {
             action.previousConfig = info.previousConfig;
             actionLog.add(action);
         }
-		if (coreDistance < 6 && cblock instanceof Vault) {
+		if (coreDistance < 6 && cblock instanceof Vault && !mute) {
             String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
             sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
             lastalerttile = tile;
@@ -406,7 +413,7 @@ public class GriefWarnings {
         action.amount = amount;
         actionLog.add(action);
 
-        if (item.equals(Items.thorium) && tile.block() instanceof NuclearReactor) {
+        if (item.equals(Items.thorium) && tile.block() instanceof NuclearReactor && !mute) {
             String message = "[orange][] " + targetPlayer.name + "[white] ([stat]#" +
                 targetPlayer.id + "[]) transfers  to a reactor. " + formatTile(tile);
             sendMessage(message);
@@ -489,7 +496,7 @@ public class GriefWarnings {
         if (trace == null) return "(trace not available)";
         //dingdong, a better alternative to "true"/"false"
         String MobileOrDesktop;
-        if(trace.mobile == true){
+        if(trace.mobile){
             MobileOrDesktop = "Mobile";
         }else{
             MobileOrDesktop = "Desktop";
@@ -502,7 +509,7 @@ public class GriefWarnings {
         int newGraph1Count = newGraph1.all.size;
         int newGraph2Count = newGraph2.all.size;
 
-        if (Math.min(oldGraphCount - newGraph1Count, oldGraphCount - newGraph2Count) > 100) {
+        if (Math.min(oldGraphCount - newGraph1Count, oldGraphCount - newGraph2Count) > 100 && !mute) {
             //who cares about what the graph says? if its more than 100 then its significant
             sendMessage("[yellow][] Power split by " + formatPlayer(targetPlayer) + " " + formatTile(tile));
 			//i need better sounds, this is slightly annoying
@@ -519,7 +526,7 @@ public class GriefWarnings {
             PlayerStats stats = getOrCreatePlayerStats(targetPlayer);
             stats.configureCount++;
             // don't trip on auto item source config
-            if (tile.block() != Blocks.itemSource && stats.configureRatelimit.get()) {
+            if (tile.block() != Blocks.itemSource && stats.configureRatelimit.get() && !mute) {
                 stats.configureRatelimit.nextTick(rl -> sendMessage("[#d899ff]Ratelimit[] " + formatRatelimit(rl, targetPlayer)));
 				Sounds.hint.play();
             }
@@ -557,7 +564,8 @@ public class GriefWarnings {
 
             PlayerStats stats = getOrCreatePlayerStats(targetPlayer);
             stats.rotateCount++;
-            if (stats.rotateRatelimit.get()) {
+            //lol imagine seeing this
+            if (stats.rotateRatelimit.get() && !mute) {
                 stats.rotateRatelimit.nextTick(rl -> sendMessage("[#d899ff]Rotate[] " + formatRatelimit(rl, targetPlayer)));
 				Sounds.hint.play();
             }
@@ -583,7 +591,7 @@ public class GriefWarnings {
     }
 
     public void handleThoriumReactorHeat(Tile tile, float heat) {
-        if (heat > 0.5f && tile.interactable(player.getTeam())) {
+        if (heat > 0.5f && tile.interactable(player.getTeam()) && !mute) {
             //STOP SPAMMING THE FUCKING CHAT
             sendMessage("[orange][]  " + formatTile(tile) + " is overheating!");
             lastalerttile = tile;
