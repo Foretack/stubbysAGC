@@ -1,7 +1,8 @@
-###Changes:
+### Changes:
 
 
-####Additions:
+#### Additions:
+
 `/mute` -> mutes all warnings.
 `/unmute` -> unmutes warnings.
 `/lastalert` or `/la` -> sets freecam on the location of the last alert.
@@ -9,7 +10,8 @@
 `/copy <target>` -> copies target raw name.
 And several other changes from pull requests.
 
-####Shortcuts:
+#### Shortcuts:
+
 Added shortcuts:
 `/show <target>` -> `/s <target>`
 `/getactions <target>` -> `/ga <target>`
@@ -23,7 +25,8 @@ Added shortcuts:
 `/players` -> `/p`
 `/fixpower` -> `/fp`
 
-####Notable tweaks:
+#### Notable tweaks:
+
 `/pi` will copy player's trace
 `/autoban <on/off>` -> will automatically ban people who join with `nigger`, `volas`, `nexit` and `xDdos` in their name. As well as people who say `Nexity#2671`, `nigger` and `test disabled` in the chat. Their info will be sent to the in-game relay channel.
 Game UI has been modified heavily.
