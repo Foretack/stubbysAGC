@@ -34,31 +34,45 @@ import java.util.zip.*;
 
 import static mindustry.Vars.*;
 
-public class NetClient implements ApplicationListener{
+public class NetClient implements ApplicationListener {
     private final static float dataTimeout = 60 * 18;
     private final static float playerSyncTime = 2;
     public final static float viewScale = 2f;
 
     private long ping;
     private Interval timer = new Interval(5);
-    /** Whether the client is currently connecting. */
+    /**
+     * Whether the client is currently connecting.
+     */
     private boolean connecting = false;
-    /** If true, no message will be shown on disconnect. */
+    /**
+     * If true, no message will be shown on disconnect.
+     */
     private boolean quiet = false;
-    /** Whether to supress disconnect events completely.*/
+    /**
+     * Whether to supress disconnect events completely.
+     */
     private boolean quietReset = false;
-    /** Counter for data timeout. */
+    /**
+     * Counter for data timeout.
+     */
     private float timeoutTime = 0f;
-    /** Last sent client snapshot ID. */
+    /**
+     * Last sent client snapshot ID.
+     */
     private int lastSent;
 
-    /** List of entities that were removed, and need not be added while syncing. */
+    /**
+     * List of entities that were removed, and need not be added while syncing.
+     */
     private IntSet removed = new IntSet();
-    /** Byte stream for reading in snapshots. */
+    /**
+     * Byte stream for reading in snapshots.
+     */
     private ReusableByteInStream byteStream = new ReusableByteInStream();
     private DataInputStream dataStream = new DataInputStream(byteStream);
 
-    public NetClient(){
+    public NetClient() {
 
         net.handleClient(Connect.class, packet -> {
             Log.info("Connecting to server: {0}", packet.addressTCP);
@@ -86,7 +100,7 @@ public class NetClient implements ApplicationListener{
             c.usid = getUsid(packet.addressTCP);
             c.uuid = platform.getUUID();
 
-            if(c.uuid == null){
+            if (c.uuid == null) {
                 ui.showErrorMessage("$invalidid");
                 ui.loadfrag.hide();
                 disconnectQuietly();
@@ -97,7 +111,7 @@ public class NetClient implements ApplicationListener{
         });
 
         net.handleClient(Disconnect.class, packet -> {
-            if(quietReset) return;
+            if (quietReset) return;
 
             connecting = false;
             state.set(State.menu);
@@ -106,19 +120,21 @@ public class NetClient implements ApplicationListener{
             player.name = Core.settings.getString("name");
             player.color.set(Core.settings.getInt("color-0"));
 
-            if(quiet) return;
+            if (quiet) return;
 
             Time.runTask(3f, ui.loadfrag::hide);
 
-            if(packet.reason != null){
-                if(packet.reason.equals("closed")){
+            if (packet.reason != null) {
+                if (packet.reason.equals("closed")) {
                     ui.showSmall("$disconnect", "$disconnect.closed");
-                }else if(packet.reason.equals("timeout")){
-                    ui.showSmall("$disconnect", "$disconnect.timeout");
-                }else if(packet.reason.equals("error")){
-                    ui.showSmall("$disconnect", "$disconnect.error");
-                }
-            }else{
+                } else
+                    if (packet.reason.equals("timeout")) {
+                        ui.showSmall("$disconnect", "$disconnect.timeout");
+                    } else
+                        if (packet.reason.equals("error")) {
+                            ui.showSmall("$disconnect", "$disconnect.error");
+                        }
+            } else {
                 ui.showErrorMessage("$disconnect");
             }
         });
@@ -139,25 +155,32 @@ public class NetClient implements ApplicationListener{
 
     //called on all clients
     @Remote(targets = Loc.server, variants = Variant.both)
-    public static void sendMessage(String message, String sender, Player playersender){
-        if(Vars.ui != null){
-            if(griefWarnings.auto.interceptMessage(message, sender, playersender)) return;
+    public static void sendMessage(String message, String sender, Player playersender) {
+        if (Vars.ui != null) {
+            if (griefWarnings.auto.interceptMessage(message, sender, playersender)) return;
             Vars.ui.chatfrag.addMessage(message, sender);
-            if(message.toLowerCase().contains("nigger") && player.isAdmin){
+            if (message.toLowerCase().contains("nigger") && player.isAdmin) {
                 griefWarnings.doAutoban(playersender, null);
-                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message); //WHY DOESNT THIS WOOOOOOOOOOOOOORK
+                Call.sendChatMessage("/d Banned: [" + playersender.name + "] Trigger: " +
+                        message);
             }
-            if(message.toLowerCase().contains("nexity#2671") && player.isAdmin){
+            if (message.toLowerCase().contains("nexity#2671") && player.isAdmin) {
                 griefWarnings.doAutoban(playersender, null);
-                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message);
+                Call.sendChatMessage("/d Banned: [" + playersender.name + "] Trigger: " + message);
             }
-            if(message.toLowerCase().equals("test disabled") && player.isAdmin){
+            if (message.toLowerCase().equals("test disabled") && player.isAdmin) {
                 griefWarnings.doAutoban(playersender, null);
-                Call.sendChatMessage("/d AUTOBANNED: " + playersender.name + " INAPPROPRIATE MESSAGE: " + message);
+                Call.sendChatMessage("/d Banned: [" + playersender.name + "] Trigger: " + message);
+            }
+            if (message.toLowerCase().contains("autoresponse") && player.isAdmin) {
+                griefWarnings.doAutokick(playersender, null);
+                Call.sendChatMessage(
+                        "/d Kicked: [" + playersender.name.replaceAll("\\[[^]]*]", "") + "] Trigger: " +
+                                message);
             }
         }
 
-        if(playersender != null){
+        if (playersender != null) {
             playersender.lastText = message;
             playersender.textFadeTime = 1f;
         }
@@ -165,16 +188,16 @@ public class NetClient implements ApplicationListener{
 
     //equivalent to above method but there's no sender and no console log
     @Remote(called = Loc.server, targets = Loc.server)
-    public static void sendMessage(String message){
-        if(Vars.ui != null){
+    public static void sendMessage(String message) {
+        if (Vars.ui != null) {
             Vars.ui.chatfrag.addMessage(message, null);
         }
     }
 
     //called when a server recieves a chat message from a player
     @Remote(called = Loc.server, targets = Loc.client)
-    public static void sendChatMessage(Player player, String message){
-        if(message.length() > maxTextLength){
+    public static void sendChatMessage(Player player, String message) {
+        if (message.length() > maxTextLength) {
             throw new ValidateException(player, "Player has sent a message above the text limit.");
         }
 
@@ -182,15 +205,15 @@ public class NetClient implements ApplicationListener{
 
         //check if it's a command
         CommandResponse response = netServer.clientCommands.handleMessage(message, player);
-        if(response.type == ResponseType.noCommand){ //no command to handle
+        if (response.type == ResponseType.noCommand) { //no command to handle
             message = netServer.admins.filterMessage(player, message);
             //supress chat message if it's filtered out
-            if(message == null){
+            if (message == null) {
                 return;
             }
 
             //special case; graphical server needs to see its message
-            if(!headless){
+            if (!headless) {
                 sendMessage(message, colorizeName(player.id, player.name), player);
             }
 
@@ -200,70 +223,73 @@ public class NetClient implements ApplicationListener{
             //invoke event for all clients but also locally
             //this is required so other clients get the correct name even if they don't know who's sending it yet
             Call.sendMessage(message, colorizeName(player.id, player.name), player);
-        }else{
+        } else {
             //log command to console but with brackets
             Log.info("<&y{0}: &lm{1}&lg>", player.name, message);
 
             //a command was sent, now get the output
-            if(response.type != ResponseType.valid){
+            if (response.type != ResponseType.valid) {
                 String text;
 
                 //send usage
-                if(response.type == ResponseType.manyArguments){
-                    text = "[scarlet]Too many arguments. Usage:[lightgray] " + response.command.text + "[gray] " + response.command.paramText;
-                }else if(response.type == ResponseType.fewArguments){
-                    text = "[scarlet]Too few arguments. Usage:[lightgray] " + response.command.text + "[gray] " + response.command.paramText;
-                }else{ //unknown command
-                    text = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
-                }
+                if (response.type == ResponseType.manyArguments) {
+                    text = "[scarlet]Too many arguments. Usage:[lightgray] " + response.command.text + "[gray] " +
+                            response.command.paramText;
+                } else
+                    if (response.type == ResponseType.fewArguments) {
+                        text = "[scarlet]Too few arguments. Usage:[lightgray] " + response.command.text + "[gray] " +
+                                response.command.paramText;
+                    } else { //unknown command
+                        text = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
+                    }
 
                 player.sendMessage(text);
             }
         }
     }
 
-    public static String colorizeName(int id, String name){
+    public static String colorizeName(int id, String name) {
         Player player = playerGroup.getByID(id);
-        if(name == null || player == null) return null;
+        if (name == null || player == null) return null;
         return "[#" + player.color.toString().toUpperCase() + "]" + name;
     }
 
     @Remote(called = Loc.client, variants = Variant.one)
-    public static void onConnect(String ip, int port){
+    public static void onConnect(String ip, int port) {
         netClient.disconnectQuietly();
         state.set(State.menu);
         logic.reset();
 
         ui.join.connect(ip, port);
     }
-    
+
     @Remote(targets = Loc.client)
-    public static void onPing(Player player, long time){
+    public static void onPing(Player player, long time) {
         Call.onPingResponse(player.con, time);
     }
 
     @Remote(variants = Variant.one)
-    public static void onPingResponse(long time){
+    public static void onPingResponse(long time) {
         netClient.ping = Time.timeSinceMillis(time);
     }
 
     @Remote(variants = Variant.one)
-    public static void onTraceInfo(Player player, TraceInfo info){
-        if(player != null && !griefWarnings.handleTraceResult(player, info)){
+    public static void onTraceInfo(Player player, TraceInfo info) {
+        if (player != null && !griefWarnings.handleTraceResult(player, info)) {
             ui.traces.show(player, info);
         }
     }
 
     @Remote(variants = Variant.one, priority = PacketPriority.high)
-    public static void onKick(KickReason reason){
+    public static void onKick(KickReason reason) {
         netClient.disconnectQuietly();
         state.set(State.menu);
         logic.reset();
 
-        if(!reason.quiet){
-            if(reason.extraText() != null){
+        if (!reason.quiet) {
+            if (reason.extraText() != null) {
                 ui.showText(reason.toString(), reason.extraText());
-            }else{
+            } else {
                 ui.showText("$disconnect", reason.toString());
             }
         }
@@ -271,7 +297,7 @@ public class NetClient implements ApplicationListener{
     }
 
     @Remote(variants = Variant.one, priority = PacketPriority.high)
-    public static void onKick(String reason){
+    public static void onKick(String reason) {
         netClient.disconnectQuietly();
         state.set(State.menu);
         logic.reset();
@@ -280,70 +306,73 @@ public class NetClient implements ApplicationListener{
     }
 
     @Remote(variants = Variant.both, unreliable = true)
-    public static void setHudText(String message){
-        if(message == null) return;
+    public static void setHudText(String message) {
+        if (message == null) return;
 
         ui.hudfrag.setHudText(message);
     }
 
     @Remote(variants = Variant.both)
-    public static void hideHudText(){
+    public static void hideHudText() {
         ui.hudfrag.toggleHudText(false);
     }
 
-    /** TCP version */
+    /**
+     * TCP version
+     */
     @Remote(variants = Variant.both)
-    public static void setHudTextReliable(String message){
+    public static void setHudTextReliable(String message) {
         setHudText(message);
     }
 
     @Remote(variants = Variant.both)
-    public static void onInfoMessage(String message){
-        if(message == null) return;
+    public static void onInfoMessage(String message) {
+        if (message == null) return;
 
         ui.showText("", message);
     }
 
     @Remote(variants = Variant.both)
-    public static void onInfoPopup(String message, float duration, int align, int top, int left, int bottom, int right){
-        if(message == null) return;
+    public static void onInfoPopup(String message, float duration, int align, int top, int left, int bottom,
+            int right) {
+        if (message == null) return;
 
         ui.showInfoPopup(message, duration, align, top, left, bottom, right);
     }
 
     @Remote(variants = Variant.both)
-    public static void onLabel(String message, float duration, float worldx, float worldy){
-        if(message == null) return;
+    public static void onLabel(String message, float duration, float worldx, float worldy) {
+        if (message == null) return;
 
         ui.showLabel(message, duration, worldx, worldy);
     }
 
     @Remote(variants = Variant.both, unreliable = true)
-    public static void onEffect(Effect effect, float x, float y, float rotation, Color color){
-        if(effect == null) return;
+    public static void onEffect(Effect effect, float x, float y, float rotation, Color color) {
+        if (effect == null) return;
 
         Effects.effect(effect, color, x, y, rotation);
     }
 
     @Remote(variants = Variant.both)
-    public static void onEffectReliable(Effect effect, float x, float y, float rotation, Color color){
+    public static void onEffectReliable(Effect effect, float x, float y, float rotation, Color color) {
         onEffect(effect, x, y, rotation, color);
     }
 
     @Remote(variants = Variant.both)
-    public static void onInfoToast(String message, float duration){
-        if(message == null) return;
+    public static void onInfoToast(String message, float duration) {
+        if (message == null) return;
 
         ui.showInfoToast(message, duration);
     }
 
     @Remote(variants = Variant.both)
-    public static void onSetRules(Rules rules){
+    public static void onSetRules(Rules rules) {
         state.rules = rules;
     }
 
     @Remote(variants = Variant.both)
-    public static void onWorldDataBegin(){
+    public static void onWorldDataBegin() {
         entities.clear();
         netClient.removed.clear();
         logic.reset();
@@ -362,43 +391,43 @@ public class NetClient implements ApplicationListener{
     }
 
     @Remote(variants = Variant.one)
-    public static void onPositionSet(float x, float y){
+    public static void onPositionSet(float x, float y) {
         player.x = x;
         player.y = y;
     }
 
     @Remote
-    public static void onPlayerDisconnect(int playerid){
+    public static void onPlayerDisconnect(int playerid) {
         griefWarnings.handlePlayerDisconnect(playerid);
         playerGroup.removeByID(playerid);
     }
 
     @Remote(variants = Variant.one, priority = PacketPriority.low, unreliable = true)
-    public static void onEntitySnapshot(byte groupID, short amount, short dataLen, byte[] data){
-        try{
+    public static void onEntitySnapshot(byte groupID, short amount, short dataLen, byte[] data) {
+        try {
             netClient.byteStream.setBytes(net.decompressSnapshot(data, dataLen));
             DataInputStream input = netClient.dataStream;
 
             EntityGroup group = entities.get(groupID);
 
             //go through each entity
-            for(int j = 0; j < amount; j++){
+            for (int j = 0; j < amount; j++) {
                 int id = input.readInt();
                 byte typeID = input.readByte();
 
-                SyncTrait entity = group == null ? null : (SyncTrait)group.getByID(id);
+                SyncTrait entity = group == null ? null : (SyncTrait) group.getByID(id);
                 boolean add = false, created = false;
 
-                if(entity == null && id == player.id){
+                if (entity == null && id == player.id) {
                     entity = player;
                     add = true;
                 }
 
                 //entity must not be added yet, so create it
-                if(entity == null){
-                    entity = (SyncTrait)content.<TypeID>getByID(ContentType.typeid, typeID).constructor.get();
+                if (entity == null) {
+                    entity = (SyncTrait) content.<TypeID>getByID(ContentType.typeid, typeID).constructor.get();
                     entity.resetID(id);
-                    if(!netClient.isEntityUsed(entity.getID())){
+                    if (!netClient.isEntityUsed(entity.getID())) {
                         add = true;
                     }
                     created = true;
@@ -407,49 +436,49 @@ public class NetClient implements ApplicationListener{
                 //read the entity
                 entity.read(input);
 
-                if(created && entity.getInterpolator() != null && entity.getInterpolator().target != null){
+                if (created && entity.getInterpolator() != null && entity.getInterpolator().target != null) {
                     //set initial starting position
                     entity.setNet(entity.getInterpolator().target.x, entity.getInterpolator().target.y);
-                    if(entity instanceof Unit && entity.getInterpolator().targets.length > 0){
-                        ((Unit)entity).rotation = entity.getInterpolator().targets[0];
+                    if (entity instanceof Unit && entity.getInterpolator().targets.length > 0) {
+                        ((Unit) entity).rotation = entity.getInterpolator().targets[0];
                     }
                 }
 
-                if(add){
+                if (add) {
                     entity.add();
                     netClient.addRemovedEntity(entity.getID());
-                    if (entity instanceof Player) griefWarnings.handlePlayerEntitySnapshot((Player)entity);
+                    if (entity instanceof Player) griefWarnings.handlePlayerEntitySnapshot((Player) entity);
                 }
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Remote(variants = Variant.both, priority = PacketPriority.low, unreliable = true)
-    public static void onBlockSnapshot(short amount, short dataLen, byte[] data){
-        try{
+    public static void onBlockSnapshot(short amount, short dataLen, byte[] data) {
+        try {
             netClient.byteStream.setBytes(net.decompressSnapshot(data, dataLen));
             DataInputStream input = netClient.dataStream;
 
-            for(int i = 0; i < amount; i++){
+            for (int i = 0; i < amount; i++) {
                 int pos = input.readInt();
                 Tile tile = world.tile(pos);
-                if(tile == null || tile.entity == null){
+                if (tile == null || tile.entity == null) {
                     Log.warn("Missing entity at {0}. Skipping block snapshot.", tile);
                     break;
                 }
                 tile.entity.read(input, tile.entity.version());
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Remote(variants = Variant.one, priority = PacketPriority.low, unreliable = true)
-    public static void onStateSnapshot(float waveTime, int wave, int enemies, short coreDataLen, byte[] coreData){
-        try{
-            if(wave > state.wave){
+    public static void onStateSnapshot(float waveTime, int wave, int enemies, short coreDataLen, byte[] coreData) {
+        try {
+            if (wave > state.wave) {
                 state.wave = wave;
                 Events.fire(new WaveEvent());
             }
@@ -462,52 +491,53 @@ public class NetClient implements ApplicationListener{
             DataInputStream input = netClient.dataStream;
 
             byte cores = input.readByte();
-            for(int i = 0; i < cores; i++){
+            for (int i = 0; i < cores; i++) {
                 int pos = input.readInt();
                 Tile tile = world.tile(pos);
 
-                if(tile != null && tile.entity != null){
+                if (tile != null && tile.entity != null) {
                     tile.entity.items.read(input);
-                }else{
+                } else {
                     new ItemModule().read(input);
                 }
             }
 
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void update(){
-        if(!net.client()) return;
+    public void update() {
+        if (!net.client()) return;
 
-        if(!state.is(State.menu)){
-            if(!connecting) sync();
-        }else if(!connecting){
-            net.disconnect();
-        }else{ //...must be connecting
-            timeoutTime += Time.delta();
-            if(timeoutTime > dataTimeout){
-                Log.err("Failed to load data!");
-                ui.loadfrag.hide();
-                quiet = true;
-                ui.showErrorMessage("$disconnect.data");
+        if (!state.is(State.menu)) {
+            if (!connecting) sync();
+        } else
+            if (!connecting) {
                 net.disconnect();
-                timeoutTime = 0f;
+            } else { //...must be connecting
+                timeoutTime += Time.delta();
+                if (timeoutTime > dataTimeout) {
+                    Log.err("Failed to load data!");
+                    ui.loadfrag.hide();
+                    quiet = true;
+                    ui.showErrorMessage("$disconnect.data");
+                    net.disconnect();
+                    timeoutTime = 0f;
+                }
             }
-        }
     }
 
-    public boolean isConnecting(){
+    public boolean isConnecting() {
         return connecting;
     }
 
-    public int getPing(){
-        return (int)ping;
+    public int getPing() {
+        return (int) ping;
     }
 
-    private void finishConnecting(){
+    private void finishConnecting() {
         state.set(State.playing);
         connecting = false;
         ui.join.hide();
@@ -517,7 +547,7 @@ public class NetClient implements ApplicationListener{
         Core.app.post(() -> ui.loadfrag.hide());
     }
 
-    private void reset(){
+    private void reset() {
         net.setClientLoaded(false);
         removed.clear();
         timeoutTime = 0f;
@@ -530,71 +560,77 @@ public class NetClient implements ApplicationListener{
         ui.chatfrag.clearMessages();
     }
 
-    public void beginConnecting(){
+    public void beginConnecting() {
         connecting = true;
     }
 
-    /** Disconnects, resetting state to the menu. */
-    public void disconnectQuietly(){
+    /**
+     * Disconnects, resetting state to the menu.
+     */
+    public void disconnectQuietly() {
         quiet = true;
         net.disconnect();
     }
 
-    /** Disconnects, causing no further changes or reset.*/
-    public void disconnectNoReset(){
+    /**
+     * Disconnects, causing no further changes or reset.
+     */
+    public void disconnectNoReset() {
         quiet = quietReset = true;
         net.disconnect();
     }
 
-    /** When set, any disconnects will be ignored and no dialogs will be shown. */
-    public void setQuiet(){
+    /**
+     * When set, any disconnects will be ignored and no dialogs will be shown.
+     */
+    public void setQuiet() {
         quiet = true;
     }
 
-    public void addRemovedEntity(int id){
+    public void addRemovedEntity(int id) {
         removed.add(id);
     }
 
-    public boolean isEntityUsed(int id){
+    public boolean isEntityUsed(int id) {
         return removed.contains(id);
     }
 
-    void sync(){
+    void sync() {
 
-        if(timer.get(0, playerSyncTime)){
+        if (timer.get(0, playerSyncTime)) {
             BuildRequest[] requests;
             //limit to 10 to prevent buffer overflows
             int usedRequests = Math.min(player.buildQueue().size, 10);
 
             requests = new BuildRequest[usedRequests];
-            for(int i = 0; i < usedRequests; i++){
+            for (int i = 0; i < usedRequests; i++) {
                 requests[i] = player.buildQueue().get(i);
             }
 
             Call.onClientShapshot(lastSent++, player.x, player.y,
-            player.pointerX, player.pointerY, player.rotation, player.baseRotation,
-            player.velocity().x, player.velocity().y,
-            player.getMineTile(),
-            player.isBoosting, player.isShooting, ui.chatfrag.shown(), player.isBuilding,
-            requests,
-            Core.camera.position.x, Core.camera.position.y,
-            Core.camera.width * viewScale, Core.camera.height * viewScale);
+                    player.pointerX, player.pointerY, player.rotation, player.baseRotation,
+                    player.velocity().x, player.velocity().y,
+                    player.getMineTile(),
+                    player.isBoosting, player.isShooting, ui.chatfrag.shown(), player.isBuilding,
+                    requests,
+                    Core.camera.position.x, Core.camera.position.y,
+                    Core.camera.width * viewScale, Core.camera.height * viewScale);
         }
 
-        if(timer.get(1, 60)){
+        if (timer.get(1, 60)) {
             Call.onPing(Time.millis());
         }
     }
 
-    String getUsid(String ip){
+    String getUsid(String ip) {
         //consistently use the latter part of an IP, if possible
-        if(ip.contains("/")){
+        if (ip.contains("/")) {
             ip = ip.substring(ip.indexOf("/") + 1);
         }
 
-        if(Core.settings.getString("usid-" + ip, null) != null){
+        if (Core.settings.getString("usid-" + ip, null) != null) {
             return Core.settings.getString("usid-" + ip, null);
-        }else{
+        } else {
             byte[] bytes = new byte[8];
             new Rand().nextBytes(bytes);
             String result = new String(Base64Coder.encode(bytes));

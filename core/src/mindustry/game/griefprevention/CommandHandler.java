@@ -92,6 +92,7 @@ public class CommandHandler {
         addCommand("mute", this::mute);
         addCommand("unmute", this::unmute);
         addCommand("blacklist", this::blacklist);
+        addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -881,24 +882,24 @@ public class CommandHandler {
     }
     public void blacklist(CommandContext ctx){
         if (ctx.args.contains("clear")){
-            //it will attempt to run trace on it, putting null will get you kicked
-        griefWarnings.autoBanTarget = "qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456";
-        reply("cleared blacklist name");
+            griefWarnings.autoBanTarget.clear();
+            reply("cleared blacklist name");
         }
-        else if (ctx.args.contains("reply")){
-            if (!griefWarnings.autoBanTarget.equals("qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456")){
-                reply("[yellow]" + griefWarnings.autoBanTarget + "[]");
+        else if (ctx.args.contains("list")){
+            if(griefWarnings.autoBanTarget.size() == 0){
+            reply("[lightgray]none[]");
             }
             else {
-                reply("[lightgray]none[]");
+                reply("current blacklist: " + griefWarnings.autoBanTarget);
+                }
             }
-        }
         else{
             String blacklistName = String.join(" ", ctx.args.subList(1, ctx.args.size()));
-            griefWarnings.autoBanTarget = blacklistName;
-            reply("set blacklist to: " + blacklistName);
+            griefWarnings.autoBanTarget.add(blacklistName);
+            reply("added " + griefWarnings.autoBanTarget + " to blacklist");
         }
     }
+
 
     /**
      * Show action logs relevant to tile or player

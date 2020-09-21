@@ -42,6 +42,7 @@ import static mindustry.Vars.player;
 
 import java.time.Instant;
 import java.util.WeakHashMap;
+import java.util.ArrayList;
 
 public class GriefWarnings {
     private Instant nextWarningTime = Instant.now();
@@ -58,13 +59,15 @@ public class GriefWarnings {
     /** whether or not to automatically ban when we are 100% sure that player is griefing (eg. intentionally crashing other clients) */
     //modified to ban certain names instead
     public boolean autoban = false;
+    /** automatically kick foo client's chat bots*/
+    public boolean autokick = false;
     /** whether to automatically perform an admin trace on player joins */
     public boolean autotrace = true;
     /** whether to log every action captured by the action log */
     public boolean logActions = false;
 
     public Tile lastalerttile;
-    public String autoBanTarget = "qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456";
+    public ArrayList<String> autoBanTarget = new ArrayList<String>();
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
     public boolean mute;
@@ -198,9 +201,6 @@ public class GriefWarnings {
                             Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                             doAutoban(target, null);
                         }
-                    //have yet to test if this works on the name changing fuckers
-                    //UPDATE: it doesn't
-                    //UPDATE2: nvm it does
                     else if(target.name.toLowerCase().contains("�")){
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
@@ -209,10 +209,14 @@ public class GriefWarnings {
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
-                    else if(target.name.toLowerCase().replaceAll("\\[[^]]*]", "").trim().contains(autoBanTarget)){
-                                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
-                                        doAutoban(target, null);
-                    }
+                    else{
+                        for(String s: autoBanTarget){
+                            if(target.name.toLowerCase().replaceAll("\\[[^]]*]", "").trim().contains(s)){
+                                Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                                doAutoban(target, null);
+                            }
+                        }
+                                    }
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
                             if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
@@ -608,6 +612,15 @@ public class GriefWarnings {
         if (player.isAdmin && targetPlayer != null && autoban) {
             Call.onAdminRequest(targetPlayer, AdminAction.ban);
             String message = "[yellow][AUTOBAN][] [purple]Banning player:[] " + formatPlayer(targetPlayer); //made this sexier
+            if (reason != null) message += " (" + reason + ")";
+            sendMessage(message, false);
+            return true;
+        } else return false;
+    }
+    public boolean doAutokick(Player targetPlayer, String reason) {
+        if (player.isAdmin && targetPlayer != null && autokick) {
+            Call.onAdminRequest(targetPlayer, AdminAction.kick);
+            String message = "[yellow][AUTOKICK][] Kicking player: " + formatPlayer(targetPlayer);
             if (reason != null) message += " (" + reason + ")";
             sendMessage(message, false);
             return true;
