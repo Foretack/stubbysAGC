@@ -3,6 +3,8 @@
 
 #### Additions:
 
+`/blacklist [reply|clear] <target>` -> Autobans anyone who joins with `<target>` in their name, e.g `/blacklist unbannable` will auto ban UNBANNABLE ROUTER CHAIN upon join. If `reply` is found it will show the current blacklisted name. If `clear` is found it will clear the blacklisted name.
+
 `/mute` -> mutes all warnings.
 
 `/unmute` -> unmutes warnings.

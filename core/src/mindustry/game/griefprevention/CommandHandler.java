@@ -26,6 +26,7 @@ import mindustry.entities.traits.BuilderTrait.BuildRequest; //FUCK EVERYTHING
 import mindustry.world.Tile;
 import mindustry.world.blocks.BlockPart;
 import org.mozilla.javascript.*;
+import sun.rmi.transport.Target;
 
 import static mindustry.Vars.*;
 
@@ -90,6 +91,7 @@ public class CommandHandler {
         addCommand("la", this::lastalert);
         addCommand("mute", this::mute);
         addCommand("unmute", this::unmute);
+        addCommand("blacklist", this::blacklist);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -876,6 +878,26 @@ public class CommandHandler {
                 griefWarnings.auto.setFreecam(true, tile.getX(), tile.getY());
                 return;
             }
+    }
+    public void blacklist(CommandContext ctx){
+        if (ctx.args.contains("clear")){
+            //it will attempt to run trace on it, putting null will get you kicked
+        griefWarnings.autoBanTarget = "qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456";
+        reply("cleared blacklist name");
+        }
+        else if (ctx.args.contains("reply")){
+            if (!griefWarnings.autoBanTarget.equals("qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456")){
+                reply("[yellow]" + griefWarnings.autoBanTarget + "[]");
+            }
+            else {
+                reply("[lightgray]none[]");
+            }
+        }
+        else{
+            String blacklistName = String.join(" ", ctx.args.subList(1, ctx.args.size()));
+            griefWarnings.autoBanTarget = blacklistName;
+            reply("set blacklist to: " + blacklistName);
+        }
     }
 
     /**

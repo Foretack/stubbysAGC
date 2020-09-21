@@ -33,7 +33,8 @@ import mindustry.world.blocks.sandbox.ItemSource;
 import mindustry.world.blocks.sandbox.LiquidSource;
 import mindustry.world.blocks.storage.Unloader;
 import mindustry.world.blocks.storage.Vault;
-
+import mindustry.world.blocks.power.ImpactReactor.FusionReactorEntity;
+import sun.rmi.transport.Target;
 
 
 import static mindustry.Vars.*;
@@ -63,6 +64,7 @@ public class GriefWarnings {
     public boolean logActions = false;
 
     public Tile lastalerttile;
+    public String autoBanTarget = "qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456qwerty123456";
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
     public boolean mute;
@@ -206,6 +208,10 @@ public class GriefWarnings {
                     else if(target.name.toLowerCase().contains("Volas")){
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
+                    }
+                    else if(target.name.toLowerCase().replaceAll("\\[[^]]*]", "").trim().contains(autoBanTarget)){
+                                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                                        doAutoban(target, null);
                     }
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
@@ -597,12 +603,6 @@ public class GriefWarnings {
             lastalerttile = tile;
         }
     }
-
-    /*public void handleImpactShutDown (Tile tile, int plasmas) {
-        if (plasmas == 1 && tile.interactable(player.getTeam())) {
-            sendMessage("[scarlet]Alert![]" + " Impact at " + formatTile(tile) + " shutting down");
-        }
-    } */
 
     public boolean doAutoban(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autoban) {
