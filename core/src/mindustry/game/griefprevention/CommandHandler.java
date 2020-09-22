@@ -93,6 +93,7 @@ public class CommandHandler {
         addCommand("unmute", this::unmute);
         addCommand("blacklist", this::blacklist);
         addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
+        addCommand("chatfilter", this::chatfilter);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -896,7 +897,26 @@ public class CommandHandler {
         else{
             String blacklistName = String.join(" ", ctx.args.subList(1, ctx.args.size()));
             griefWarnings.autoBanTarget.add(blacklistName);
-            reply("added " + griefWarnings.autoBanTarget + " to blacklist");
+            reply("added " + blacklistName + " to blacklist");
+        }
+    }
+    public void chatfilter(CommandContext ctx){
+        if (ctx.args.contains("clear")){
+            griefWarnings.chatFilteredText.clear();
+            reply("cleared blacklisted text");
+        }
+        else if (ctx.args.contains("list")){
+            if(griefWarnings.chatFilteredText.size() == 0){
+                reply("[lightgray]none[]");
+            }
+            else {
+                reply("current blacklisted text: " + griefWarnings.chatFilteredText);
+            }
+        }
+        else{
+            String blacklistText = String.join(" ", ctx.args.subList(1, ctx.args.size()));
+            griefWarnings.chatFilteredText.add(blacklistText);
+            reply("added " + blacklistText + " to blacklist");
         }
     }
 

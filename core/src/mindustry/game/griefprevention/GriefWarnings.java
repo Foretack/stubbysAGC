@@ -58,9 +58,9 @@ public class GriefWarnings {
     public boolean tileInfoHud = true;
     /** whether or not to automatically ban when we are 100% sure that player is griefing (eg. intentionally crashing other clients) */
     //modified to ban certain names instead
-    public boolean autoban = false;
-    /** automatically kick foo client's chat bots*/
-    public boolean autokick = false;
+    public boolean autoban = true;
+    /** automatically kick filtered text*/
+    public boolean autokick = true; //dont ask
     /** whether to automatically perform an admin trace on player joins */
     public boolean autotrace = true;
     /** whether to log every action captured by the action log */
@@ -68,6 +68,7 @@ public class GriefWarnings {
 
     public Tile lastalerttile;
     public ArrayList<String> autoBanTarget = new ArrayList<String>();
+    public ArrayList<String> chatFilteredText = new ArrayList<String>();
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
     public boolean mute;
@@ -620,7 +621,7 @@ public class GriefWarnings {
     public boolean doAutokick(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autokick) {
             Call.onAdminRequest(targetPlayer, AdminAction.kick);
-            String message = "[yellow][AUTOKICK][] Kicking player: " + formatPlayer(targetPlayer);
+            String message = "[sky][AUTOKICK][] Kicking player: " + formatPlayer(targetPlayer);
             if (reason != null) message += " (" + reason + ")";
             sendMessage(message, false);
             return true;
