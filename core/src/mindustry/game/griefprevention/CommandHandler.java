@@ -91,9 +91,11 @@ public class CommandHandler {
         addCommand("la", this::lastalert);
         addCommand("mute", this::mute);
         addCommand("unmute", this::unmute);
-        addCommand("blacklist", this::blacklist);
-        addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
-        addCommand("chatfilter", this::chatfilter);
+        //addCommand("blacklist", this::blacklist);
+        //addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
+        //addCommand("chatfilter", this::chatfilter);   le fuzz doesn't like auto bans
+        addCommand("uuid", this::uuid);
+
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -139,6 +141,9 @@ public class CommandHandler {
     public void reply(String message) {
         ui.chatfrag.addMessage(message, null);
     }
+    public void replyAlert(String message){ ui.showInfo(message);}
+    public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
+    public void areAlertsMuted(String message){ ui.hudfrag.setHudText(message);}
 
     public boolean runCommand(String message) {
         if (!message.startsWith("/")) return false;
@@ -267,6 +272,26 @@ public class CommandHandler {
             reply(response.toString());
         }
     }
+    public void uuid(CommandContext ctx){
+        String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
+        PlayerStats stats = getStats(name);
+        if (stats == null) {
+            reply("[orange]Not found");
+            return;
+        }
+        Player target = stats.wrappedPlayer.get();
+        if (target == null) {
+            reply("[orange]PlayerStats weakref gone?");
+            return;
+        }
+        if (stats.trace == null) {
+            reply("[scarlet]UUID untraceable");
+        }
+        else {
+            Core.app.setClipboardText(griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied UUID of: " + target.name);
+        }
+        }
 
 
     public void copy(CommandContext ctx) {
@@ -314,9 +339,9 @@ public class CommandHandler {
             reply("[orange]Not found");
             return;
         }
-        Player target = stats.wrappedPlayer.get();
+        Player target = getPlayer(name);
         if (target == null) {
-            reply("[orange]PlayerStats weakref gone?");
+            reply("[orange]Player not found");
             return;
         }
         Core.app.setClipboardText(griefWarnings.formatTrace(stats.trace));
@@ -333,13 +358,9 @@ public class CommandHandler {
                 "[sky]Player trace copied to clipboard[][goldenrod] (Requires /autotrace on)";
         reply(r);
     }
-
     /**
      * Get player by either id or full name
      */
-    public String escapeColorCodes(String string){
-        return Strings.stripColors(string).toLowerCase();
-    }
     public Player getPlayer(String name) {
         Player target;
         if (name.startsWith("&")) {
@@ -404,7 +425,7 @@ public class CommandHandler {
                 }
             } else {
                 for (Entry<Player, PlayerStats> e : griefWarnings.playerStats.entrySet()) {
-                    if (e.getKey().name.equalsIgnoreCase(name)) return e.getValue();
+                    if (e.getKey().name.replaceAll("\\[[^]]*]", "").replaceAll("[\uE800\uE813\uE809\uE80F\uE814\uE828]", "").trim().toLowerCase().startsWith(name)) return e.getValue();
                 }
             }
         return null;
@@ -449,11 +470,14 @@ public class CommandHandler {
      */
     public void mute(CommandContext ctx){
         griefWarnings.mute = true;
-        reply("[sky]Muted");
+        replyUnlock("[sky]Muted");
+        ui.hudfrag.toggleHudText(true);
+        areAlertsMuted("[yellow]alerts are muted");
     }
     public void unmute(CommandContext ctx){
         griefWarnings.mute = false;
-        reply("[sky]Unmuted");
+        replyUnlock("[sky]Unmuted");
+        ui.hudfrag.toggleHudText(false);
     }
 
     public void auto(CommandContext ctx) {
@@ -881,45 +905,45 @@ public class CommandHandler {
                 return;
             }
     }
-    public void blacklist(CommandContext ctx){
+    /*public void blacklist(CommandContext ctx){
         if (ctx.args.contains("clear")){
             griefWarnings.autoBanTarget.clear();
-            reply("cleared blacklist name");
+            replyUnlock("cleared blacklist names");
         }
         else if (ctx.args.contains("list")){
             if(griefWarnings.autoBanTarget.size() == 0){
             reply("[lightgray]none[]");
             }
             else {
-                reply("current blacklist: " + griefWarnings.autoBanTarget);
+                    replyAlert("current blacklist: \n" + griefWarnings.autoBanTarget);
                 }
             }
         else{
             String blacklistName = String.join(" ", ctx.args.subList(1, ctx.args.size()));
             griefWarnings.autoBanTarget.add(blacklistName);
-            reply("added " + blacklistName + " to blacklist");
+            replyUnlock("added <" + blacklistName + "> to blacklist");
         }
     }
     public void chatfilter(CommandContext ctx){
         if (ctx.args.contains("clear")){
             griefWarnings.chatFilteredText.clear();
-            reply("cleared blacklisted text");
+            replyUnlock("cleared chat filter");
         }
         else if (ctx.args.contains("list")){
             if(griefWarnings.chatFilteredText.size() == 0){
                 reply("[lightgray]none[]");
             }
             else {
-                reply("current blacklisted text: " + griefWarnings.chatFilteredText);
+                    replyAlert("current blacklisted text: \n" + griefWarnings.chatFilteredText);
             }
         }
         else{
             String blacklistText = String.join(" ", ctx.args.subList(1, ctx.args.size()));
             griefWarnings.chatFilteredText.add(blacklistText);
-            reply("added " + blacklistText + " to blacklist");
+            replyUnlock("added <" + blacklistText + "> to blacklist");
         }
     }
-
+    */
 
     /**
      * Show action logs relevant to tile or player

@@ -10,7 +10,6 @@ import arc.util.Log;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
-import mindustry.game.EventType;
 import mindustry.gen.*;
 import mindustry.entities.type.Player;
 import mindustry.entities.type.Unit;
@@ -33,8 +32,6 @@ import mindustry.world.blocks.sandbox.ItemSource;
 import mindustry.world.blocks.sandbox.LiquidSource;
 import mindustry.world.blocks.storage.Unloader;
 import mindustry.world.blocks.storage.Vault;
-import mindustry.world.blocks.power.ImpactReactor.FusionReactorEntity;
-import sun.rmi.transport.Target;
 
 
 import static mindustry.Vars.*;
@@ -57,7 +54,7 @@ public class GriefWarnings {
     /** whether or not to show the persistent tileinfo display */
     public boolean tileInfoHud = true;
     /** whether or not to automatically ban when we are 100% sure that player is griefing (eg. intentionally crashing other clients) */
-    //modified to ban certain names instead
+    /**modified to ban certain names instead*/
     public boolean autoban = true;
     /** automatically kick filtered text*/
     public boolean autokick = true; //dont ask
@@ -129,7 +126,7 @@ public class GriefWarnings {
     public boolean sendMessage(String message) {
         return sendMessage(message, true);
     }
-
+    public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
     public void sendLocal(String message) {
         ui.chatfrag.addMessage(message, null);
     }
@@ -190,6 +187,7 @@ public class GriefWarnings {
                     sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares
+                    /*
                     if(target.name.toLowerCase().contains("nexit")){
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
@@ -198,7 +196,7 @@ public class GriefWarnings {
                         Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
-                    else if(target.name.toLowerCase().contains("XdDoS")){
+                    else if(target.name.toLowerCase().contains("xddos")){
                             Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
                             doAutoban(target, null);
                         }
@@ -218,6 +216,7 @@ public class GriefWarnings {
                             }
                         }
                                     }
+                    */
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
                             if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
@@ -357,8 +356,9 @@ public class GriefWarnings {
             String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
             sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
             lastalerttile = tile;
+            }
         }
-    }
+
 
     public void handleBlockDeconstructFinish(Tile tile, Block block, int builderId) {
         // this runs before the block is actually removed
@@ -515,6 +515,11 @@ public class GriefWarnings {
         return trace.ip + " /// " + trace.uuid + " /// " + MobileOrDesktop;
     }
 
+    public String formatUUID(TraceInfo trace){
+        if (trace.uuid == null) return "(UUID untraceable)";
+        return trace.uuid;
+    }
+
     public void handlePowerGraphSplit(Player targetPlayer, Tile tile, PowerGraph oldGraph, PowerGraph newGraph1, PowerGraph newGraph2) {
         int oldGraphCount = oldGraph.all.size;
         int newGraph1Count = newGraph1.all.size;
@@ -604,6 +609,7 @@ public class GriefWarnings {
     public void handleThoriumReactorHeat(Tile tile, float heat) {
         if (heat > 0.5f && tile.interactable(player.getTeam()) && !mute) {
             //STOP SPAMMING THE FUCKING CHAT
+            //mute ftw
             sendMessage("[orange][]  " + formatTile(tile) + " is overheating!");
             lastalerttile = tile;
         }
@@ -612,18 +618,18 @@ public class GriefWarnings {
     public boolean doAutoban(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autoban) {
             Call.onAdminRequest(targetPlayer, AdminAction.ban);
-            String message = "[yellow][AUTOBAN][] [purple]Banning player:[] " + formatPlayer(targetPlayer); //made this sexier
+            String message = "[AUTOBAN] \n" + formatPlayer(targetPlayer); //made this sexier
             if (reason != null) message += " (" + reason + ")";
-            sendMessage(message, false);
+            replyUnlock(message);
             return true;
         } else return false;
     }
     public boolean doAutokick(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autokick) {
             Call.onAdminRequest(targetPlayer, AdminAction.kick);
-            String message = "[sky][AUTOKICK][] Kicking player: " + formatPlayer(targetPlayer);
+            String message = "[AUTOKICK] \n" + formatPlayer(targetPlayer);
             if (reason != null) message += " (" + reason + ")";
-            sendMessage(message, false);
+            replyUnlock(message);
             return true;
         } else return false;
     }

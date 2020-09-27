@@ -159,6 +159,7 @@ public class NetClient implements ApplicationListener {
         if (Vars.ui != null) {
             if (griefWarnings.auto.interceptMessage(message, sender, playersender)) return;
             Vars.ui.chatfrag.addMessage(message, sender);
+            /*
             if (message.toLowerCase().contains("nigger") && player.isAdmin) {
                 griefWarnings.doAutoban(playersender, null);
                 Call.sendChatMessage("/d Banned: < " + playersender.name + " > Trigger: " +
@@ -184,6 +185,7 @@ public class NetClient implements ApplicationListener {
                     Call.sendChatMessage("/d Kicked: < " + playersender.name + " > Trigger: " + message);
                 }
             }
+            */
         }
 
         if (playersender != null) {

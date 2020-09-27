@@ -277,7 +277,7 @@ public class Actions {
         public String toString() {
             String whatReallyHappened;      //We may never know
             if(disconnect){
-                whatReallyHappened = "[orange]Disconnected from[]";
+                whatReallyHappened = "[scarlet]Disconnected from[]";
             }else{
                 whatReallyHappened = "[green]Connected to[]";
             }
