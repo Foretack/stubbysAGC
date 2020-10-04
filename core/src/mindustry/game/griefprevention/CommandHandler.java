@@ -91,9 +91,15 @@ public class CommandHandler {
         addCommand("la", this::lastalert);
         addCommand("mute", this::mute);
         addCommand("unmute", this::unmute);
-        //addCommand("blacklist", this::blacklist);
-        //addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
-        //addCommand("chatfilter", this::chatfilter);   le fuzz doesn't like auto bans
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
+        addCommand("blacklist", this::blacklist);
+        addCommand("autokick", settingsToggle("autokick", "automatic kicks", v -> griefWarnings.autokick = v));
+        addCommand("chatfilter", this::chatfilter);
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
+        /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         addCommand("uuid", this::uuid);
 
 
@@ -472,7 +478,7 @@ public class CommandHandler {
         griefWarnings.mute = true;
         replyUnlock("[sky]Muted");
         ui.hudfrag.toggleHudText(true);
-        areAlertsMuted("[yellow]alerts are muted");
+        areAlertsMuted("[yellow]MUTE: ON");
     }
     public void unmute(CommandContext ctx){
         griefWarnings.mute = false;
@@ -905,7 +911,7 @@ public class CommandHandler {
                 return;
             }
     }
-    /*public void blacklist(CommandContext ctx){
+    public void blacklist(CommandContext ctx){
         if (ctx.args.contains("clear")){
             griefWarnings.autoBanTarget.clear();
             replyUnlock("cleared blacklist names");
@@ -943,7 +949,7 @@ public class CommandHandler {
             replyUnlock("added <" + blacklistText + "> to blacklist");
         }
     }
-    */
+
 
     /**
      * Show action logs relevant to tile or player

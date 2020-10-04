@@ -159,25 +159,14 @@ public class NetClient implements ApplicationListener {
         if (Vars.ui != null) {
             if (griefWarnings.auto.interceptMessage(message, sender, playersender)) return;
             Vars.ui.chatfrag.addMessage(message, sender);
-            /*
             if (message.toLowerCase().contains("nigger") && player.isAdmin) {
-                griefWarnings.doAutoban(playersender, null);
+                griefWarnings.doAutokick(playersender, null);
                 Call.sendChatMessage("/d Banned: < " + playersender.name + " > Trigger: " +
                         message);
             }
             if (message.toLowerCase().contains("nexity#2671") && player.isAdmin) {
-                griefWarnings.doAutoban(playersender, null);
-                Call.sendChatMessage("/d Banned: < " + playersender.name + " > Trigger: " + message);
-            }
-            if (message.toLowerCase().equals("test disabled") && player.isAdmin) {
-                griefWarnings.doAutoban(playersender, null);
-                Call.sendChatMessage("/d Banned: < " + playersender.name + " > Trigger: " + message);
-            }
-            if (message.toLowerCase().contains("autoresponse") && player.isAdmin) {
                 griefWarnings.doAutokick(playersender, null);
-                Call.sendChatMessage(
-                        "/d Kicked: < " + playersender.name + " > Trigger: " +
-                                message);
+                Call.sendChatMessage("/d Banned: < " + playersender.name + " > Trigger: " + message);
             }
             for (String b: griefWarnings.chatFilteredText){
                 if (message.toLowerCase().contains(b) && player.isAdmin){
@@ -185,7 +174,6 @@ public class NetClient implements ApplicationListener {
                     Call.sendChatMessage("/d Kicked: < " + playersender.name + " > Trigger: " + message);
                 }
             }
-            */
         }
 
         if (playersender != null) {

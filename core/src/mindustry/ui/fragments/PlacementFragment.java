@@ -43,20 +43,20 @@ public class PlacementFragment extends Fragment{
     int blockSelectSeq;
     long blockSelectSeqMillis;
     Binding[] blockSelect = {
-        Binding.block_select_01,
-        Binding.block_select_02,
-        Binding.block_select_03,
-        Binding.block_select_04,
-        Binding.block_select_05,
-        Binding.block_select_06,
-        Binding.block_select_07,
-        Binding.block_select_08,
-        Binding.block_select_09,
-        Binding.block_select_10,
-        Binding.block_select_left,
-        Binding.block_select_right,
-        Binding.block_select_up,
-        Binding.block_select_down
+            Binding.block_select_01,
+            Binding.block_select_02,
+            Binding.block_select_03,
+            Binding.block_select_04,
+            Binding.block_select_05,
+            Binding.block_select_06,
+            Binding.block_select_07,
+            Binding.block_select_08,
+            Binding.block_select_09,
+            Binding.block_select_10,
+            Binding.block_select_left,
+            Binding.block_select_right,
+            Binding.block_select_up,
+            Binding.block_select_down
     };
 
     public PlacementFragment(){
@@ -258,7 +258,7 @@ public class PlacementFragment extends Fragment{
                     top.add(new Table()).growX().update(topTable -> {
                         //don't refresh unnecessarily
                         if((tileDisplayBlock() == null && lastDisplay == getSelected() && !lastGround)
-                        || (tileDisplayBlock() != null && lastHover == hoverTile && lastDisplay == tileDisplayBlock() && lastGround))
+                                || (tileDisplayBlock() != null && lastHover == hoverTile && lastDisplay == tileDisplayBlock() && lastGround))
                             return;
 
                         topTable.clear();
@@ -278,8 +278,8 @@ public class PlacementFragment extends Fragment{
                                     for(int i = 0; i < blocks.size; i++){
                                         if(blocks.get(i) == lastDisplay && (i + 1) / 10 - 1 < blockSelect.length){
                                             keyCombo = Core.bundle.format("placement.blockselectkeys", Core.keybinds.get(blockSelect[currentCategory.ordinal()]).key.toString())
-                                                + (i < 10 ? "" : Core.keybinds.get(blockSelect[(i + 1) / 10 - 1]).key.toString() + ",")
-                                                + Core.keybinds.get(blockSelect[i % 10]).key.toString() + "]";
+                                                    + (i < 10 ? "" : Core.keybinds.get(blockSelect[(i + 1) / 10 - 1]).key.toString() + ",")
+                                                    + Core.keybinds.get(blockSelect[i % 10]).key.toString() + "]";
                                             break;
                                         }
                                     }
@@ -288,7 +288,7 @@ public class PlacementFragment extends Fragment{
                                 header.left();
                                 header.add(new Image(lastDisplay.icon(Cicon.medium))).size(8 * 4);
                                 header.labelWrap(() -> !unlocked(lastDisplay) ? Core.bundle.get("block.unknown") : lastDisplay.localizedName + keyComboFinal)
-                                .left().width(190f).padLeft(5);
+                                        .left().width(190f).padLeft(5);
                                 header.add().growX();
                                 if(unlocked(lastDisplay)){
                                     header.addButton("?", Styles.clearPartialt, () -> {
@@ -306,7 +306,7 @@ public class PlacementFragment extends Fragment{
                                     req.table(line -> {
                                         line.left();
                                         line.addImage(stack.item.icon(Cicon.small)).size(8 * 2);
-                                        line.add(stack.item.localizedName).maxWidth(140f).fillX().color(Color.white).padLeft(2).left().get().setEllipsis(true);
+                                        line.add(stack.item.localizedName).maxWidth(140f).fillX().color(Color.lightGray).padLeft(2).left().get().setEllipsis(true);
                                         line.labelWrap(() -> {
                                             TileEntity core = player.getClosestCore();
                                             if(core == null || state.rules.infiniteResources) return "*/*";

@@ -56,7 +56,7 @@ public class GriefWarnings {
     /** whether or not to automatically ban when we are 100% sure that player is griefing (eg. intentionally crashing other clients) */
     /**modified to ban certain names instead*/
     public boolean autoban = true;
-    /** automatically kick filtered text*/
+    /** automatically kick filtered text & blacklisted name*/
     public boolean autokick = true; //dont ask
     /** whether to automatically perform an admin trace on player joins */
     public boolean autotrace = true;
@@ -127,6 +127,7 @@ public class GriefWarnings {
         return sendMessage(message, true);
     }
     public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
+    public void replyAlert(String message){ ui.showInfo(message);}
     public void sendLocal(String message) {
         ui.chatfrag.addMessage(message, null);
     }
@@ -187,36 +188,28 @@ public class GriefWarnings {
                     sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares
-                    /*
-                    if(target.name.toLowerCase().contains("nexit")){
-                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                    if(target.name.toLowerCase().contains("�")){
+                        Call.sendChatMessage("/d <AUTO> banned: " + target.name + " " + griefWarnings.formatTrace(trace));
                         doAutoban(target, null);
                     }
+
                     else if(target.name.toLowerCase().contains("nigger")){
-                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
-                        doAutoban(target, null);
+                        Call.sendChatMessage("/d <AUTO> kicked: " + target.name + " " + griefWarnings.formatTrace(trace));
+                        doAutokick(target, null);
                     }
-                    else if(target.name.toLowerCase().contains("xddos")){
-                            Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                    else if(target.name.toLowerCase().contains("nexity")){
+                            Call.sendChatMessage("/d <AUTO> banned: " + target.name + " " + griefWarnings.formatTrace(trace));
                             doAutoban(target, null);
                         }
-                    else if(target.name.toLowerCase().contains("�")){
-                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
-                        doAutoban(target, null);
-                    }
-                    else if(target.name.toLowerCase().contains("Volas")){
-                        Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
-                        doAutoban(target, null);
-                    }
                     else{
                         for(String s: autoBanTarget){
                             if(target.name.toLowerCase().replaceAll("\\[[^]]*]", "").trim().contains(s)){
-                                Call.sendChatMessage("/d AUTOBANNED: " + target.name + " " + griefWarnings.formatTrace(trace));
+                                Call.sendChatMessage("/d <AUTO> Kicked: " + target.name + " " + griefWarnings.formatTrace(trace));
                                 doAutoban(target, null);
                             }
                         }
                                     }
-                    */
+
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
                             if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
@@ -618,18 +611,18 @@ public class GriefWarnings {
     public boolean doAutoban(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autoban) {
             Call.onAdminRequest(targetPlayer, AdminAction.ban);
-            String message = "[AUTOBAN] \n" + formatPlayer(targetPlayer); //made this sexier
+            String message = "[purple][AUTOBAN][] Banning player:" + formatPlayer(targetPlayer); //made this sexier
             if (reason != null) message += " (" + reason + ")";
-            replyUnlock(message);
+            sendLocal(message);
             return true;
         } else return false;
     }
     public boolean doAutokick(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autokick) {
             Call.onAdminRequest(targetPlayer, AdminAction.kick);
-            String message = "[AUTOKICK] \n" + formatPlayer(targetPlayer);
+            String message = "[sky][AUTOKICK][] Kicking player:" + formatPlayer(targetPlayer);
             if (reason != null) message += " (" + reason + ")";
-            replyUnlock(message);
+            sendLocal(message);
             return true;
         } else return false;
     }
