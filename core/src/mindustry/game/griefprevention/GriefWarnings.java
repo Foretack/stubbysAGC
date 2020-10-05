@@ -208,12 +208,8 @@ public class GriefWarnings {
                                 doAutoban(target, null);
                             }
                         }
-                    }
-                    Array<Player> all = playerGroup.all();
-                    for(int i = 0; i < all.size - 1; i++)
-                        if(all.get(i).con.address.equals(target.con.address)){
-                            Log.info("Duplicate ip detected: " + target.con.address + "( " + all.get(i).name + " and " + target.name +  " )");
-                        }
+                                    }
+
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
                             if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
