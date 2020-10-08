@@ -211,8 +211,8 @@ public class Actions {
                 afterConfigIcon = "[lightgray]none[]";
             }
             else {
-                for (String ci : configArray) {
-                    afterConfigIcon = ci;
+                for (String aci : configArray) {
+                    afterConfigIcon = aci;
                     if (i == afterConfig) {
                         break;
                     } else
