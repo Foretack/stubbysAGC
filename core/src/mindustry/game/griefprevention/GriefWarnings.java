@@ -37,6 +37,7 @@ import mindustry.world.blocks.storage.Vault;
 import static mindustry.Vars.*;
 import static mindustry.Vars.player;
 
+import java.io.*;
 import java.time.Instant;
 import java.util.WeakHashMap;
 import java.util.ArrayList;
@@ -72,6 +73,19 @@ public class GriefWarnings {
     public Auto auto;
     public RefList refs = new RefList();
     public ActionLog actionLog = new ActionLog();
+    public File file = new File("traceLog.txt");
+    public FileWriter fw;
+    public int autoCloseFile;
+
+    {
+        try {
+            fw = new FileWriter(file, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public PrintWriter pw = new PrintWriter(fw);
 
     public GriefWarnings() {
         Events.on(DepositEvent.class, this::handleDeposit);
@@ -131,6 +145,11 @@ public class GriefWarnings {
     public void sendLocal(String message) {
         ui.chatfrag.addMessage(message, null);
     }
+    public void autoClose(String[] args){
+        if (autoCloseFile > 3){
+            pw.close();
+        }
+    }
 
     public float getDistanceToCore(Unit unit, float x, float y) {
         TileEntity nearestCoreEntity = unit.getClosestCore();
@@ -152,7 +171,9 @@ public class GriefWarnings {
         playerStats.clear();
         refs.reset();
         actionLog.reset();
+        autoCloseFile = autoCloseFile + 1;
         if (auto != null) auto.reset();
+        System.out.println("Reset event");
     }
 
     public void handleTileChange(TileChangeEvent event) {
@@ -185,6 +206,7 @@ public class GriefWarnings {
             if (target == player) return stats;
             if (player.isAdmin && autotrace) {
                 stats.doTrace(trace -> {
+                    pw.append(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
                     sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares

@@ -101,7 +101,7 @@ public class CommandHandler {
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         addCommand("uuid", this::uuid);
-
+        addCommand("close", this::close);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -1013,6 +1013,9 @@ public class CommandHandler {
                 }
             }
         }
+    }
+    public void close(CommandContext ctx){
+        griefWarnings.pw.close();
     }
 
 

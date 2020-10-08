@@ -12,6 +12,7 @@ import mindustry.world.Tile;
 import mindustry.world.blocks.power.PowerNode;
 
 import java.util.Date;
+import java.util.ArrayList;
 
 import static mindustry.Vars.*;
 
@@ -173,80 +174,54 @@ public class Actions {
 
         @Override
         public String toString() {
-            String itemIcon;        //This is probably the worst way to do it, but hey, as long as it works
-            if(beforeConfig == -1){
-                itemIcon = "[lightgray]none[]"; //previous one was showing to unloaders as well, didn't fit well
-            }else if(beforeConfig == 0){
-                itemIcon = "\uF838";
-            }else if(beforeConfig == 1){
-                itemIcon = "\uF837";
-            }else if(beforeConfig == 2){
-                itemIcon = "\uF836";
-            }else if(beforeConfig == 3){
-                itemIcon = "\uF835";
-            }else if(beforeConfig == 4){
-                itemIcon = "\uF834";
-            }else if(beforeConfig == 5){
-                itemIcon = "\uF833";
-            }else if(beforeConfig == 6){
-                itemIcon = "\uF832";
-            }else if(beforeConfig == 7){
-                itemIcon = "\uF831";
-            }else if(beforeConfig == 8){
-                itemIcon = "\uF830";
-            }else if(beforeConfig == 9){
-                itemIcon = "\uF82F";
-            }else if(beforeConfig == 10){
-                itemIcon = "\uF82E";
-            }else if(beforeConfig == 11){
-                itemIcon = "\uF82D";
-            }else if(beforeConfig == 12){
-                itemIcon = "\uF82C";
-            }else if(beforeConfig == 13){
-                itemIcon = "\uF82B";
-            }else if(beforeConfig == 14){
-                itemIcon = "\uF82A";
-            }else{
-                itemIcon = "\uF829";
+            ArrayList<String> configArray = new ArrayList<String>();
+            configArray.add("\uF838");
+            configArray.add("\uF837");
+            configArray.add("\uF836");
+            configArray.add("\uF835");
+            configArray.add("\uF834");
+            configArray.add("\uF833");
+            configArray.add("\uF832");
+            configArray.add("\uF831");
+            configArray.add("\uF830");
+            configArray.add("\uF82F");
+            configArray.add("\uF82E");
+            configArray.add("\uF82D");
+            configArray.add("\uF82C");
+            configArray.add("\uF82B");
+            configArray.add("\uF82A");
+            configArray.add("\uF829");
+
+            String beforeConfigIcon = "[lightgray]none[]";
+            String afterConfigIcon = "[lightgray]none[]";
+            int i = 0;
+            if (beforeConfig == -1){
+                beforeConfigIcon = "[lightgray]none[]";
             }
-            String itemIconAfter;
-            if(afterConfig == -1){
-                itemIconAfter = "[lightgray]none[]";
-            }else if(afterConfig == 0){
-                itemIconAfter = "\uF838";
-            }else if(afterConfig == 1){
-                itemIconAfter = "\uF837";
-            }else if(afterConfig == 2){
-                itemIconAfter = "\uF836";
-            }else if(afterConfig == 3){
-                itemIconAfter = "\uF835";
-            }else if(afterConfig == 4){
-                itemIconAfter = "\uF834";
-            }else if(afterConfig == 5){
-                itemIconAfter = "\uF833";
-            }else if(afterConfig == 6){
-                itemIconAfter = "\uF832";
-            }else if(afterConfig == 7){
-                itemIconAfter = "\uF831";
-            }else if(afterConfig == 8){
-                itemIconAfter = "\uF830";
-            }else if(afterConfig == 9){
-                itemIconAfter = "\uF82F";
-            }else if(afterConfig == 10){
-                itemIconAfter = "\uF82E";
-            }else if(afterConfig == 11){
-                itemIconAfter = "\uF82D";
-            }else if(afterConfig == 12){
-                itemIconAfter = "\uF82C";
-            }else if(afterConfig == 13){
-                itemIconAfter = "\uF82B";
-            }else if(afterConfig == 14){
-                itemIconAfter = "\uF82A";
-            }else{
-                itemIconAfter = "\uF829";
-            }                               //my life is filled with regret
+            else {
+                for (String ci : configArray) {
+                    beforeConfigIcon = ci;
+                    if (i == beforeConfig) {
+                        break;
+                    } else
+                        i++;
+                }
+            }
+            if (afterConfig == -1){
+                afterConfigIcon = "[lightgray]none[]";
+            }
+            else {
+                for (String ci : configArray) {
+                    afterConfigIcon = ci;
+                    if (i == afterConfig) {
+                        break;
+                    } else
+                        i++;
+                }
+            }
             return name +
-                    " [royal]" + targetBlock.name + " []at " + griefWarnings.formatTile(tile) + " " + itemIcon + " -> " + itemIconAfter;
+                    " [royal]" + targetBlock.name + " []at " + griefWarnings.formatTile(tile) + " " +
+                    beforeConfigIcon + " -> " + afterConfigIcon;
         }
     }
 
