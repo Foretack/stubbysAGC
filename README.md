@@ -6,6 +6,8 @@ someone pls remind to update this later
 
 `/blacklist [list|clear] <target>` -> Autobans anyone who joins with `<target>` in their name, e.g `/blacklist unbannable` will auto ban UNBANNABLE ROUTER CHAIN upon join. If `list` is found it will show the current blacklisted names. If `clear` is found it will clear the blacklisted names.
 
+`/chatfilter [list|clear] <target word> -> Autokicks anyone who sends a message containing specified word. Works exactly like blacklist but with kicks.
+
 `/mute` -> mutes all warnings.
 
 `/unmute` -> unmutes warnings.
@@ -15,6 +17,8 @@ someone pls remind to update this later
 `/auto 6 [p] [la]` or `/a 6 [p] [la]` -> Goes to cursor. If `p` is found then use persist mode. If `la` is found then will take you to the coordinates of the last alert.
 
 `/copy <target>` -> copies target raw name.
+
+`/uuid <target>` -> copies target raw name.
 
 And several other changes from pull requests.
 
@@ -49,7 +53,7 @@ Added shortcuts:
 
 `/pi` will copy player's trace
 
-`/autoban <on/off>` -> will automatically ban people who join with `nigger`, `volas`, `nexit` and `xDdos` in their name. As well as people who say `Nexity#2671`, `nigger` and `test disabled` in the chat. Their info will be sent to the in-game relay channel.
+`/autoban <on/off>` -> will automatically ban people who join with `�`and "nexity in their name. Their info will be sent to the in-game relay channel.
 
 Game UI has been modified heavily.
 

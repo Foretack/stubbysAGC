@@ -208,12 +208,8 @@ public class GriefWarnings {
                                 doAutoban(target, null);
                             }
                         }
-                    }
-                    Array<Player> all = playerGroup.all();
-                    for(int i = 0; i < all.size - 1; i++)
-                        if(all.get(i).con.address.equals(target.con.address)){
-                            Log.info("Duplicate ip detected: " + target.con.address + "( " + all.get(i).name + " and " + target.name +  " )");
-                        }
+                                    }
+
                     /*Events.on(EventType.PlayerJoin.class, event -> {
                         for(Player p: playerGroup.all())
                             if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
@@ -515,6 +511,10 @@ public class GriefWarnings {
     public String formatUUID(TraceInfo trace){
         if (trace.uuid == null) return "(UUID untraceable)";
         return trace.uuid;
+    }
+    public String formatIP(TraceInfo trace){
+        if (trace.ip == null) return "(IP untraceable)";
+        return trace.ip;
     }
 
     public void handlePowerGraphSplit(Player targetPlayer, Tile tile, PowerGraph oldGraph, PowerGraph newGraph1, PowerGraph newGraph2) {
