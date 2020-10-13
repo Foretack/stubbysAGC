@@ -204,9 +204,12 @@ public class GriefWarnings {
             target.stats = stats;
             refs.get(target); // create ref
             if (target == player) return stats;
+            if (target.isAdmin){
+                sendLocal("[cyan]> > > []" + formatPlayer(target) + "[cyan] < < <[]");
+            }
             if (player.isAdmin && autotrace) {
                 stats.doTrace(trace -> {
-                    pw.append(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
+                    pw.print(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
                     sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares
@@ -241,7 +244,7 @@ public class GriefWarnings {
 
                 });
             }
-            else {
+            else{
                 sendLocal("[lime][] " + formatPlayer(target));
             }
         }
@@ -367,12 +370,12 @@ public class GriefWarnings {
             action.previousConfig = info.previousConfig;
             actionLog.add(action);
         }
-		if (coreDistance < 6 && cblock instanceof Vault && !mute) {
-            String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
-            sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
-            lastalerttile = tile;
+            if (coreDistance < 6 && cblock instanceof Vault && !mute) {
+                String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
+                sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
+                lastalerttile = tile;
+                }
             }
-        }
 
 
     public void handleBlockDeconstructFinish(Tile tile, Block block, int builderId) {
