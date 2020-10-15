@@ -205,7 +205,7 @@ public class GriefWarnings {
             refs.get(target); // create ref
             if (target == player) return stats;
             if (target.isAdmin){
-                sendLocal("[cyan]> > > []" + formatPlayer(target) + "[cyan] < < <[]");
+                sendLocal("[purple][] " + formatPlayer(target));
             }
             if (player.isAdmin && autotrace) {
                 stats.doTrace(trace -> {
