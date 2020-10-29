@@ -67,6 +67,7 @@ public class GriefWarnings {
     public boolean logActions = false;
 
     public Tile lastalerttile;
+    public int lastalertplayer;
     public ArrayList<String> autoBanTarget = new ArrayList<String>();
     public ArrayList<String> chatFilteredText = new ArrayList<String>();
     public CommandHandler commandHandler = new CommandHandler();
@@ -278,6 +279,7 @@ public class GriefWarnings {
             sendMessage(message);
             didWarn = true;
             lastalerttile = tile;
+            lastalertplayer = builder.id;
         }else if (coreDistance < 0 && cblock instanceof ItemLiquidGenerator) {
             String message = "[scarlet]WARNING[] " + formatPlayer(builder) + " is building a generator [stat]" +
                     Math.round(coreDistance) + "[] blocks from core. [stat]" + Math.round(progress * 100) + "%";
@@ -319,6 +321,7 @@ public class GriefWarnings {
                         sendMessage(message, false);
 						Sounds.hint.play();
 						lastalerttile = tile;
+                        lastalertplayer = builder.id;
                     }
                 }
             }
@@ -372,6 +375,7 @@ public class GriefWarnings {
                 String message = "[scarlet][] " + formatPlayer(builder) + " is deconstructing a core vault!";
                 sendMessage(message, true); //not sure if the spam is needed, this is useful both ways
                 lastalerttile = tile;
+                lastalertplayer = builder.id;
                 }
             }
 
@@ -446,6 +450,7 @@ public class GriefWarnings {
             sendMessage(message);
 			Sounds.hint.play();
 			lastalerttile = tile;
+            lastalertplayer = targetPlayer.id;
         }
         //Imagine having warnings for blast transfers. Like, who cares?
     }
@@ -551,6 +556,7 @@ public class GriefWarnings {
 			//i need better sounds, this is slightly annoying
             Sounds.eSwing.play();
             lastalerttile = tile;
+            lastalertplayer = targetPlayer.id;
         }
     }
 

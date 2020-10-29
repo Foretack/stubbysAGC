@@ -101,6 +101,9 @@ public class CommandHandler {
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         addCommand("uuid", this::uuid);
+        addCommand("u", this::uuid);
+        addCommand("lastuuid", this::lastuuid);
+        addCommand("lu", this::lastuuid);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -279,6 +282,13 @@ public class CommandHandler {
     }
     public void uuid(CommandContext ctx){
         String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
+        String commandName = ""; 
+
+        if (name.contains("--")){
+            String[] parts = name.split(" --");
+            name = parts[0]; 
+            commandName = parts[1];
+        }
         PlayerStats stats = getStats(name);
         if (stats == null) {
             reply("[orange]Not found");
@@ -292,12 +302,57 @@ public class CommandHandler {
         if (stats.trace == null) {
             reply("[scarlet]UUID untraceable");
         }
+        if (commandName.contains("b")){
+            Core.app.setClipboardText("ban " + griefWarnings.formatUUID(stats.trace) + " grief");
+            replyUnlock("Copied ban UUID of: " + target.name);
+        }
+        else if (commandName.contains("l")){
+            Core.app.setClipboardText("lookup " + griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied lookup UUID of: " + target.name);
+        }
+        else if (commandName.contains("k")){
+            Core.app.setClipboardText("kick " + griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied kick UUID of: " + target.name);
+        }
         else {
             Core.app.setClipboardText(griefWarnings.formatUUID(stats.trace));
             replyUnlock("Copied UUID of: " + target.name);
         }
+    }
+
+    public void lastuuid(CommandContext ctx){
+        String name = "#" + griefWarnings.lastalertplayer;
+        PlayerStats stats = getStats(name);
+        if (stats == null) {
+            reply("[orange]Not found" + name);
+            return;
+        }
+        Player target = stats.wrappedPlayer.get();
+        if (target == null) {
+            reply("[orange]PlayerStats weakref gone?");
+            return;
+        }
+        if (stats.trace == null) {
+            reply("[scarlet]UUID untraceable");
+        }
+        if (ctx.args.contains("b")){
+            Core.app.setClipboardText("ban " + griefWarnings.formatUUID(stats.trace) + " grief");
+            replyUnlock("Copied ban UUID of: " + target.name);
+        }
+        else if (ctx.args.contains("l")){
+            Core.app.setClipboardText("lookup " + griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied lookup UUID of: " + target.name);
+        }
+        else if (ctx.args.contains("k")){
+            Core.app.setClipboardText("kick " + griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied kick UUID of: " + target.name);
+        }
+        else {
+            Core.app.setClipboardText(griefWarnings.formatUUID(stats.trace));
+            replyUnlock("Copied UUID of: " + target.name);
         }
 
+    }
 
     public void copy(CommandContext ctx) {
         String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
