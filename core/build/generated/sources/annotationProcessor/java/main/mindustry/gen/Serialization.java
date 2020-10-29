@@ -18,6 +18,71 @@ public class Serialization {
   static {
     Injector.ii();}
 
+  public static void writeServer(DataOutput stream, JoinDialog.Server object) throws IOException {
+    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.ip);
+    stream.writeInt(object.port);
+  }
+
+  public static JoinDialog.Server readServer(DataInput stream) throws IOException {
+    mindustry.ui.dialogs.JoinDialog.Server object = new mindustry.ui.dialogs.JoinDialog.Server();
+    object.ip = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+    object.port= stream.readInt();
+    return object;
+  }
+
+  public static void writePlayerInfo(DataOutput stream, Administration.PlayerInfo object) throws
+      IOException {
+    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.id);
+    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastName);
+    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastIP);
+    arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.ips);
+    arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.names);
+    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.adminUsid);
+    stream.writeInt(object.timesKicked);
+    stream.writeInt(object.timesJoined);
+    stream.writeBoolean(object.banned);
+    stream.writeBoolean(object.admin);
+    stream.writeLong(object.lastKicked);
+  }
+
+  public static Administration.PlayerInfo readPlayerInfo(DataInput stream) throws IOException {
+    mindustry.net.Administration.PlayerInfo object = new mindustry.net.Administration.PlayerInfo();
+    object.id = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+    object.lastName = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+    object.lastIP = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+    object.ips = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
+    object.names = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
+    object.adminUsid = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+    object.timesKicked= stream.readInt();
+    object.timesJoined= stream.readInt();
+    object.banned= stream.readBoolean();
+    object.admin= stream.readBoolean();
+    object.lastKicked= stream.readLong();
+    return object;
+  }
+
+  public static void writeStats(DataOutput stream, Stats object) throws IOException {
+    arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).write(stream, object.itemsDelivered);
+    stream.writeInt(object.enemyUnitsDestroyed);
+    stream.writeInt(object.wavesLasted);
+    stream.writeLong(object.timeLasted);
+    stream.writeInt(object.buildingsBuilt);
+    stream.writeInt(object.buildingsDeconstructed);
+    stream.writeInt(object.buildingsDestroyed);
+  }
+
+  public static Stats readStats(DataInput stream) throws IOException {
+    mindustry.game.Stats object = new mindustry.game.Stats();
+    object.itemsDelivered = (arc.struct.ObjectIntMap)arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).read(stream);
+    object.enemyUnitsDestroyed= stream.readInt();
+    object.wavesLasted= stream.readInt();
+    object.timeLasted= stream.readLong();
+    object.buildingsBuilt= stream.readInt();
+    object.buildingsDeconstructed= stream.readInt();
+    object.buildingsDestroyed= stream.readInt();
+    return object;
+  }
+
   public static void writeRules(DataOutput stream, Rules object) throws IOException {
     stream.writeBoolean(object.infiniteResources);
     stream.writeBoolean(object.waveTimer);
@@ -106,72 +171,74 @@ public class Serialization {
     return object;
   }
 
-  public static void writeStats(DataOutput stream, Stats object) throws IOException {
-    arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).write(stream, object.itemsDelivered);
-    stream.writeInt(object.enemyUnitsDestroyed);
-    stream.writeInt(object.wavesLasted);
-    stream.writeLong(object.timeLasted);
-    stream.writeInt(object.buildingsBuilt);
-    stream.writeInt(object.buildingsDeconstructed);
-    stream.writeInt(object.buildingsDestroyed);
-  }
-
-  public static Stats readStats(DataInput stream) throws IOException {
-    mindustry.game.Stats object = new mindustry.game.Stats();
-    object.itemsDelivered = (arc.struct.ObjectIntMap)arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).read(stream);
-    object.enemyUnitsDestroyed= stream.readInt();
-    object.wavesLasted= stream.readInt();
-    object.timeLasted= stream.readLong();
-    object.buildingsBuilt= stream.readInt();
-    object.buildingsDeconstructed= stream.readInt();
-    object.buildingsDestroyed= stream.readInt();
-    return object;
-  }
-
-  public static void writePlayerInfo(DataOutput stream, Administration.PlayerInfo object) throws
-      IOException {
-    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.id);
-    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastName);
-    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastIP);
-    arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.ips);
-    arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.names);
-    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.adminUsid);
-    stream.writeInt(object.timesKicked);
-    stream.writeInt(object.timesJoined);
-    stream.writeBoolean(object.banned);
-    stream.writeBoolean(object.admin);
-    stream.writeLong(object.lastKicked);
-  }
-
-  public static Administration.PlayerInfo readPlayerInfo(DataInput stream) throws IOException {
-    mindustry.net.Administration.PlayerInfo object = new mindustry.net.Administration.PlayerInfo();
-    object.id = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-    object.lastName = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-    object.lastIP = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-    object.ips = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
-    object.names = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
-    object.adminUsid = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-    object.timesKicked= stream.readInt();
-    object.timesJoined= stream.readInt();
-    object.banned= stream.readBoolean();
-    object.admin= stream.readBoolean();
-    object.lastKicked= stream.readLong();
-    return object;
-  }
-
-  public static void writeServer(DataOutput stream, JoinDialog.Server object) throws IOException {
-    arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.ip);
-    stream.writeInt(object.port);
-  }
-
-  public static JoinDialog.Server readServer(DataInput stream) throws IOException {
-    mindustry.ui.dialogs.JoinDialog.Server object = new mindustry.ui.dialogs.JoinDialog.Server();
-    object.ip = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-    object.port= stream.readInt();
-    return object;
-  }
-
   public static void init() {
+    arc.Core.settings.setSerializer(mindustry.ui.dialogs.JoinDialog.Server.class, new Settings.TypeSerializer<JoinDialog.Server>() {
+      public void write(DataOutput stream, JoinDialog.Server object) throws IOException {
+        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.ip);
+        stream.writeInt(object.port);
+      }
+
+      public JoinDialog.Server read(DataInput stream) throws IOException {
+        mindustry.ui.dialogs.JoinDialog.Server object = new mindustry.ui.dialogs.JoinDialog.Server();
+        object.ip = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+        object.port= stream.readInt();
+        return object;
+      }
+    });
+    arc.Core.settings.setSerializer(mindustry.net.Administration.PlayerInfo.class, new Settings.TypeSerializer<Administration.PlayerInfo>() {
+      public void write(DataOutput stream, Administration.PlayerInfo object) throws IOException {
+        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.id);
+        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastName);
+        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastIP);
+        arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.ips);
+        arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.names);
+        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.adminUsid);
+        stream.writeInt(object.timesKicked);
+        stream.writeInt(object.timesJoined);
+        stream.writeBoolean(object.banned);
+        stream.writeBoolean(object.admin);
+        stream.writeLong(object.lastKicked);
+      }
+
+      public Administration.PlayerInfo read(DataInput stream) throws IOException {
+        mindustry.net.Administration.PlayerInfo object = new mindustry.net.Administration.PlayerInfo();
+        object.id = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+        object.lastName = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+        object.lastIP = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+        object.ips = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
+        object.names = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
+        object.adminUsid = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
+        object.timesKicked= stream.readInt();
+        object.timesJoined= stream.readInt();
+        object.banned= stream.readBoolean();
+        object.admin= stream.readBoolean();
+        object.lastKicked= stream.readLong();
+        return object;
+      }
+    });
+    arc.Core.settings.setSerializer(mindustry.game.Stats.class, new Settings.TypeSerializer<Stats>() {
+      public void write(DataOutput stream, Stats object) throws IOException {
+        arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).write(stream, object.itemsDelivered);
+        stream.writeInt(object.enemyUnitsDestroyed);
+        stream.writeInt(object.wavesLasted);
+        stream.writeLong(object.timeLasted);
+        stream.writeInt(object.buildingsBuilt);
+        stream.writeInt(object.buildingsDeconstructed);
+        stream.writeInt(object.buildingsDestroyed);
+      }
+
+      public Stats read(DataInput stream) throws IOException {
+        mindustry.game.Stats object = new mindustry.game.Stats();
+        object.itemsDelivered = (arc.struct.ObjectIntMap)arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).read(stream);
+        object.enemyUnitsDestroyed= stream.readInt();
+        object.wavesLasted= stream.readInt();
+        object.timeLasted= stream.readLong();
+        object.buildingsBuilt= stream.readInt();
+        object.buildingsDeconstructed= stream.readInt();
+        object.buildingsDestroyed= stream.readInt();
+        return object;
+      }
+    });
     arc.Core.settings.setSerializer(mindustry.game.Rules.class, new Settings.TypeSerializer<Rules>() {
       public void write(DataOutput stream, Rules object) throws IOException {
         stream.writeBoolean(object.infiniteResources);
@@ -258,73 +325,6 @@ public class Serialization {
         object.defaultTeam = (mindustry.game.Team)arc.Core.settings.getSerializer(mindustry.game.Team.class).read(stream);
         object.waveTeam = (mindustry.game.Team)arc.Core.settings.getSerializer(mindustry.game.Team.class).read(stream);
         object.tags = (arc.struct.StringMap)arc.Core.settings.getSerializer(arc.struct.StringMap.class).read(stream);
-        return object;
-      }
-    });
-    arc.Core.settings.setSerializer(mindustry.game.Stats.class, new Settings.TypeSerializer<Stats>() {
-      public void write(DataOutput stream, Stats object) throws IOException {
-        arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).write(stream, object.itemsDelivered);
-        stream.writeInt(object.enemyUnitsDestroyed);
-        stream.writeInt(object.wavesLasted);
-        stream.writeLong(object.timeLasted);
-        stream.writeInt(object.buildingsBuilt);
-        stream.writeInt(object.buildingsDeconstructed);
-        stream.writeInt(object.buildingsDestroyed);
-      }
-
-      public Stats read(DataInput stream) throws IOException {
-        mindustry.game.Stats object = new mindustry.game.Stats();
-        object.itemsDelivered = (arc.struct.ObjectIntMap)arc.Core.settings.getSerializer(arc.struct.ObjectIntMap.class).read(stream);
-        object.enemyUnitsDestroyed= stream.readInt();
-        object.wavesLasted= stream.readInt();
-        object.timeLasted= stream.readLong();
-        object.buildingsBuilt= stream.readInt();
-        object.buildingsDeconstructed= stream.readInt();
-        object.buildingsDestroyed= stream.readInt();
-        return object;
-      }
-    });
-    arc.Core.settings.setSerializer(mindustry.net.Administration.PlayerInfo.class, new Settings.TypeSerializer<Administration.PlayerInfo>() {
-      public void write(DataOutput stream, Administration.PlayerInfo object) throws IOException {
-        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.id);
-        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastName);
-        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.lastIP);
-        arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.ips);
-        arc.Core.settings.getSerializer(arc.struct.Array.class).write(stream, object.names);
-        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.adminUsid);
-        stream.writeInt(object.timesKicked);
-        stream.writeInt(object.timesJoined);
-        stream.writeBoolean(object.banned);
-        stream.writeBoolean(object.admin);
-        stream.writeLong(object.lastKicked);
-      }
-
-      public Administration.PlayerInfo read(DataInput stream) throws IOException {
-        mindustry.net.Administration.PlayerInfo object = new mindustry.net.Administration.PlayerInfo();
-        object.id = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-        object.lastName = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-        object.lastIP = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-        object.ips = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
-        object.names = (arc.struct.Array)arc.Core.settings.getSerializer(arc.struct.Array.class).read(stream);
-        object.adminUsid = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-        object.timesKicked= stream.readInt();
-        object.timesJoined= stream.readInt();
-        object.banned= stream.readBoolean();
-        object.admin= stream.readBoolean();
-        object.lastKicked= stream.readLong();
-        return object;
-      }
-    });
-    arc.Core.settings.setSerializer(mindustry.ui.dialogs.JoinDialog.Server.class, new Settings.TypeSerializer<JoinDialog.Server>() {
-      public void write(DataOutput stream, JoinDialog.Server object) throws IOException {
-        arc.Core.settings.getSerializer(java.lang.String.class).write(stream, object.ip);
-        stream.writeInt(object.port);
-      }
-
-      public JoinDialog.Server read(DataInput stream) throws IOException {
-        mindustry.ui.dialogs.JoinDialog.Server object = new mindustry.ui.dialogs.JoinDialog.Server();
-        object.ip = (java.lang.String)arc.Core.settings.getSerializer(java.lang.String.class).read(stream);
-        object.port= stream.readInt();
         return object;
       }
     });

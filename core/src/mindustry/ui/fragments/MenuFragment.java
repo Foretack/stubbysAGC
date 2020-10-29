@@ -13,9 +13,12 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import mindustry.core.*;
 import mindustry.game.EventType.*;
+import mindustry.game.griefprevention.GriefWarnings;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.ui.*;
+
+import java.io.IOException;
 
 import static mindustry.Vars.*;
 
@@ -177,7 +180,14 @@ public class MenuFragment extends Fragment{
                 //new Buttoni("$schematics", Icon.paste, ui.schematics::show),
                 new Buttoni("$settings", Icon.settings, ui.settings::show),
                 new Buttoni("$about.button", Icon.info, ui.about::show),
-                new Buttoni("$quit", Icon.exit, Core.app::exit)
+                new Buttoni("$quit", Icon.exit, () -> {
+                    try{griefWarnings.bw.close();}
+                    catch(IOException e){
+                        e.printStackTrace();
+                        Log.err("this error might be serious-ish");
+                    }
+                    Core.app.exit();
+                })
             );
 
         }).width(width).growY();

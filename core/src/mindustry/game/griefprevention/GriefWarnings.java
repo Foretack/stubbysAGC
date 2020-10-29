@@ -4,20 +4,21 @@ import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
 import arc.math.Mathf;
-import mindustry.entities.type.TileEntity;
 import arc.struct.Array;
 import arc.util.Log;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
-import mindustry.gen.*;
 import mindustry.entities.type.Player;
+import mindustry.entities.type.TileEntity;
 import mindustry.entities.type.Unit;
+import mindustry.game.EventType;
 import mindustry.game.EventType.DepositEvent;
 import mindustry.game.EventType.ResetEvent;
 import mindustry.game.EventType.TileChangeEvent;
 import mindustry.game.EventType.WithdrawEvent;
 import mindustry.gen.Call;
+import mindustry.gen.Sounds;
 import mindustry.net.Administration.TraceInfo;
 import mindustry.net.Packets.AdminAction;
 import mindustry.type.Item;
@@ -33,14 +34,15 @@ import mindustry.world.blocks.sandbox.LiquidSource;
 import mindustry.world.blocks.storage.Unloader;
 import mindustry.world.blocks.storage.Vault;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.WeakHashMap;
 
 import static mindustry.Vars.*;
-import static mindustry.Vars.player;
-
-import java.io.*;
-import java.time.Instant;
-import java.util.WeakHashMap;
-import java.util.ArrayList;
 
 public class GriefWarnings {
     private Instant nextWarningTime = Instant.now();
@@ -74,25 +76,22 @@ public class GriefWarnings {
     public RefList refs = new RefList();
     public ActionLog actionLog = new ActionLog();
     public File file = new File("traceLog.txt");
-    public FileWriter fw;
+    public BufferedWriter bw;
     public int autoCloseFile;
 
     {
         try {
-            fw = new FileWriter(file, true);
+            bw = new BufferedWriter(new FileWriter(file, true));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public PrintWriter pw = new PrintWriter(fw);
 
     public GriefWarnings() {
         Events.on(DepositEvent.class, this::handleDeposit);
         Events.on(WithdrawEvent.class, this::handleWithdraw);
         Events.on(TileChangeEvent.class, this::handleTileChange);
         Events.on(ResetEvent.class, this::reset);
-
         loadSettings();
     }
 
@@ -145,11 +144,6 @@ public class GriefWarnings {
     public void sendLocal(String message) {
         ui.chatfrag.addMessage(message, null);
     }
-    public void autoClose(String[] args){
-        if (autoCloseFile > 3){
-            pw.close();
-        }
-    }
 
     public float getDistanceToCore(Unit unit, float x, float y) {
         TileEntity nearestCoreEntity = unit.getClosestCore();
@@ -171,8 +165,10 @@ public class GriefWarnings {
         playerStats.clear();
         refs.reset();
         actionLog.reset();
-        autoCloseFile = autoCloseFile + 1;
         if (auto != null) auto.reset();
+        try{
+            bw.flush();
+        }catch(IOException e){Log.info("There was a problem saving some data pls ficx");}
         System.out.println("Reset event");
     }
 
@@ -209,7 +205,9 @@ public class GriefWarnings {
             }
             if (player.isAdmin && autotrace) {
                 stats.doTrace(trace -> {
-                    pw.print(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
+                    try{
+                        bw.write(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
+                    }catch(IOException e){e.printStackTrace();Log.info("You should probably ignore that error but ask about it anyway,");}
                     sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares

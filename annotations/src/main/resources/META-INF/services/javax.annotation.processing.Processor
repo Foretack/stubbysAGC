@@ -1,5 +1,5 @@
-mindustry.annotations.impl.AssetsProcess
 mindustry.annotations.impl.CallSuperProcess
-mindustry.annotations.impl.SerializeProcess
 mindustry.annotations.impl.StructProcess
+mindustry.annotations.impl.AssetsProcess
+mindustry.annotations.impl.SerializeProcess
 mindustry.annotations.remote.RemoteProcess

@@ -6,7 +6,8 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$PROJECT_DIR$/annotations/build/libs/annotations-release.jar" />
-          <entry name="C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/lib/tools.jar" />
+          <entry name="C" />
+          <entry name="/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/lib/tools.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup/javapoet/1.12.1/e0e49f502697522ef047470b117ff81edc9f9a07/javapoet-1.12.1.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.Anuken.Arc/arc-core/da2913187aa724da769c6a80bc709eebb5bc0888/96e7e77dfdf11bc55809f1d12feb14d4abcc22ec/arc-core-da2913187aa724da769c6a80bc709eebb5bc0888.jar" />
         </processorPath>

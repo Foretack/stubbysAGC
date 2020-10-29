@@ -101,7 +101,6 @@ public class CommandHandler {
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         /**     DONT USE UNLESS IF ABSOLUTELY NECESSARY     */
         addCommand("uuid", this::uuid);
-        addCommand("close", this::close);
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -658,7 +657,8 @@ public class CommandHandler {
             reply("set target distance to " + distance);
             break;
         }
-        case "itemsource": {
+        case "itemsource":
+        case "is":{
             if (ctx.args.size() == 3) {
                 if (ctx.args.get(2).toLowerCase().equals("cancel")) {
                     auto.manageItemSource(null);
@@ -678,27 +678,7 @@ public class CommandHandler {
             reply("automatically configuring item source " + griefWarnings.formatTile(tile));
             break;
         }
-        case "is": {
-            if (ctx.args.size() == 3) {
-                if (ctx.args.get(2).toLowerCase().equals("cancel")) {
-                    auto.manageItemSource(null);
-                    reply("cancelled automatic item source configuration");
-                    return;
-                }
-            }
-            Tile tile = getCursorTile();
-            if (tile == null) {
-                reply("cursor is not on a tile");
-                return;
-            }
-            if (!auto.manageItemSource(tile)) {
-                reply("target tile is not an item source");
-                return;
-            }
-            reply("automatically configuring item source " + griefWarnings.formatTile(tile));
-            break;
-        }
-        case "dumptarget": {
+            case "dumptarget": {
             // usage: /auto dumptarget [<x> <y>]
             Tile tile = null;
             if (ctx.args.size() == 3) {
@@ -1014,10 +994,6 @@ public class CommandHandler {
             }
         }
     }
-    public void close(CommandContext ctx){
-        griefWarnings.pw.close();
-    }
-
 
     /**
      * Undo actions of player
