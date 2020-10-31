@@ -228,7 +228,7 @@ public class GriefWarnings {
                     else{
                         for(String s: autoBanTarget){
                             if(target.name.toLowerCase().replaceAll("\\[[^]]*]", "").trim().contains(s)){
-                                Call.sendChatMessage("/d <AUTO> Kicked: " + target.name + " " + griefWarnings.formatTrace(trace));
+                                Call.sendChatMessage("/d <AUTO> Banned: " + target.name + " " + griefWarnings.formatTrace(trace));
                                 doAutoban(target, null);
                             }
                         }
@@ -644,7 +644,7 @@ public class GriefWarnings {
     public boolean doAutoban(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autoban) {
             Call.onAdminRequest(targetPlayer, AdminAction.ban);
-            String message = "[purple][AUTOBAN][] Banning player:" + formatPlayer(targetPlayer); //made this sexier
+            String message = "[purple][AUTOBAN][] Banning player: " + formatPlayer(targetPlayer); //made this sexier
             if (reason != null) message += " (" + reason + ")";
             sendLocal(message);
             return true;
@@ -653,7 +653,7 @@ public class GriefWarnings {
     public boolean doAutokick(Player targetPlayer, String reason) {
         if (player.isAdmin && targetPlayer != null && autokick) {
             Call.onAdminRequest(targetPlayer, AdminAction.kick);
-            String message = "[sky][AUTOKICK][] Kicking player:" + formatPlayer(targetPlayer);
+            String message = "[sky][AUTOKICK][] Kicking player: " + formatPlayer(targetPlayer);
             if (reason != null) message += " (" + reason + ")";
             sendLocal(message);
             return true;
@@ -691,5 +691,5 @@ public class GriefWarnings {
         auto = new Auto();
     }
 
-    //sex
+    //what are you looking for? >:(
 }

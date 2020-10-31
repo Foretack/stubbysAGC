@@ -4,6 +4,7 @@ import arc.Core;
 import arc.math.geom.Vec2;
 import arc.struct.Array;
 
+import java.time.Instant;
 import java.util.ArrayList;
 
 import arc.func.Cons;
@@ -46,6 +47,7 @@ public class CommandHandler {
         }
     }
 
+    private Instant nextRunTime = Instant.now();
     public ContextFactory scriptContextFactory = new ContextFactory();
     public Context scriptContext;
     public Scriptable scriptScope;
@@ -104,6 +106,8 @@ public class CommandHandler {
         addCommand("u", this::uuid);
         addCommand("lastuuid", this::lastuuid);
         addCommand("lu", this::lastuuid);
+        addCommand("clear", this::clear); //sometimes you just wanna clear chat
+
 
         // mods context not yet initialized here
         scriptContext = scriptContextFactory.enterContext();
@@ -152,6 +156,7 @@ public class CommandHandler {
     public void replyAlert(String message){ ui.showInfo(message);}
     public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
     public void areAlertsMuted(String message){ ui.hudfrag.setHudText(message);}
+    public void clear(boolean clear){ui.chatfrag.clear();}
 
     public boolean runCommand(String message) {
         if (!message.startsWith("/")) return false;
@@ -169,6 +174,10 @@ public class CommandHandler {
      * If "redundant" is present as an argument, connect the block even if it is
      * already part of the same power graph.
      */
+    public void clear(CommandContext ctx){
+        clear(true);
+    }
+
     public void fixPower(CommandContext ctx) {
         boolean redundant = ctx.args.contains("redundant"); //bad!bad!bad!
         griefWarnings.fixer.fixPower(redundant);
@@ -303,7 +312,7 @@ public class CommandHandler {
             reply("[scarlet]UUID untraceable");
         }
         if (commandName.contains("b")){
-            Core.app.setClipboardText("ban " + griefWarnings.formatUUID(stats.trace) + " grief");
+            Core.app.setClipboardText("ban " + griefWarnings.formatUUID(stats.trace) + " Griefing");
             replyUnlock("Copied ban UUID of: " + target.name);
         }
         else if (commandName.contains("l")){
@@ -584,7 +593,7 @@ public class CommandHandler {
             reply("[cyan]going to tile[] " + griefWarnings.formatTile(tile));
             break;
         }
-        //stop giving me warnings u fuck
+        //ignore the intelliJ warnings pls
         case "1": {
             if (ctx.args.size() < 4) {
                 reply("[orange]Not enough arguments");
@@ -901,7 +910,10 @@ public class CommandHandler {
                 return;
             }
         }
-        for (int i = 0; i < count; i++) Call.onAdminRequest(player, AdminAction.wave);
+        //TODO: fix this
+        for (int i = 0; i < count; i++){
+            Call.onAdminRequest(player, AdminAction.wave);
+        }
         reply("done");
     }
 
