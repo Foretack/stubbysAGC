@@ -571,6 +571,8 @@ public class GriefWarnings {
             if (tile.block() != Blocks.itemSource && stats.configureRatelimit.get() && !mute) {
                 stats.configureRatelimit.nextTick(rl -> sendMessage("[#d899ff]Ratelimit[] " + formatRatelimit(rl, targetPlayer)));
 				Sounds.hint.play();
+                lastalerttile = null;
+                lastalertplayer = targetPlayer.id;
             }
         }
 
@@ -610,6 +612,8 @@ public class GriefWarnings {
             if (stats.rotateRatelimit.get() && !mute) {
                 stats.rotateRatelimit.nextTick(rl -> sendMessage("[#d899ff]Rotate[] " + formatRatelimit(rl, targetPlayer)));
 				Sounds.hint.play();
+                lastalerttile = null;
+                lastalertplayer = targetPlayer.id;
             }
         }
 
