@@ -70,6 +70,7 @@ public class GriefWarnings {
     public int lastalertplayer;
     public ArrayList<String> autoBanTarget = new ArrayList<String>();
     public ArrayList<String> chatFilteredText = new ArrayList<String>();
+    public ArrayList<String> ipList = new ArrayList<String>();
     public CommandHandler commandHandler = new CommandHandler();
     public FixGrief fixer = new FixGrief();
     public boolean mute;
@@ -166,6 +167,7 @@ public class GriefWarnings {
         playerStats.clear();
         refs.reset();
         actionLog.reset();
+        ipList.clear();
         if (auto != null) auto.reset();
         try{
             bw.flush();
@@ -209,7 +211,7 @@ public class GriefWarnings {
                     try{
                         bw.write(target.name.replaceAll("\\[[^]]*]", "") + " " + formatTrace(trace));
                     }catch(IOException e){e.printStackTrace();Log.info("You should probably ignore that error but ask about it anyway,");}
-                    sendLocal("[lime][] " + formatPlayer(target) );    //Still runs trace but doesn't show. Don't like it? Too bad!
+                    sendLocal("[lime][] " + formatPlayer(target) );//Still runs trace but doesn't show. Don't like it? Too bad!
                     Log.infoTag("antigrief", "Player join: " + target.name + " (" + player.id+ ") " + formatTrace(trace));
                     //Potentially gonna spam #in-game-relay, but who cares
                     if(target.name.toLowerCase().contains("�")){
@@ -232,14 +234,17 @@ public class GriefWarnings {
                                 doAutoban(target, null);
                             }
                         }
-                                    }
 
-                    /*Events.on(EventType.PlayerJoin.class, event -> {
-                        for(Player p: playerGroup.all())
-                            if(p.stats.trace.ip.contains(event.player.stats.trace.ip)){
-                                sendLocal("[yellow]SECURITY ALERT![] duplicate IP detected");
-                            }
-                    });*/
+                        if (!ipList.isEmpty() && ipList.toString().contains(target.stats.trace.ip)){
+                            sendLocal("[yellow]SECURITY ALERT![] Latest join contains preexisting IP");
+                        }
+                        else{
+                            ipList.add(target.stats.trace.ip);
+                        }
+
+
+                    }
+
 
                 });
             }
@@ -480,6 +485,9 @@ public class GriefWarnings {
             String traceString = "";
             if (stats.trace != null) traceString = " \n" + formatTrace(stats.trace);
             sendLocal("[red][] " + formatPlayer(targetPlayer) );
+            if (!targetPlayer.isAdmin && ipList.contains(stats.trace.ip)){
+                ipList.remove(stats.trace.ip);
+            }
         }
     }
 

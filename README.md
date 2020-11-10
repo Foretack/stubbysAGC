@@ -18,6 +18,8 @@ someone pls remind to update this later
 
 `/copy <target>` -> copies target raw name.
 
+`/copyga <target>` -> copies target's actions log.
+
 `/uuid <target> [--b | --l | --k]` or `/u <target> [--b | --l | --k]` -> copies target uuid. If `b` is found ban sytax will be copied. If `l` is found lookup sytax will be copied. If `k` is found kick sytax will be copied.  
 
 `/lastuuid [b | l | k]` or `/lu [b | l | k]` -> copies the uuid of the last alerter. If `b` is found ban sytax will be copied. If `l` is found lookup sytax will be copied. If `k` is found kick sytax will be copied. 

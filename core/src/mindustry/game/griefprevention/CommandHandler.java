@@ -156,7 +156,7 @@ public class CommandHandler {
     public void replyAlert(String message){ ui.showInfo(message);}
     public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
     public void areAlertsMuted(String message){ ui.hudfrag.setHudText(message);}
-    public void clear(boolean clear){ui.chatfrag.clear();}
+    public void clear(boolean clear){ui.chatfrag.clearMessages();}
 
     public boolean runCommand(String message) {
         if (!message.startsWith("/")) return false;
@@ -277,17 +277,16 @@ public class CommandHandler {
     //had to make some changes cuz yes
     public void players(CommandContext ctx) {
         reply("Players:");
+        StringBuilder response = new StringBuilder();
         for (Player target : playerGroup.all()) {
-            StringBuilder response = new StringBuilder();
-            response.append("[accent]*[] ")
-                    .append("[cyan]>>>>[]" + griefWarnings.formatPlayer(target) + "[cyan]<<<<[]");
+            response.append("\n[cyan][] " + griefWarnings.formatPlayer(target));
             PlayerStats stats = griefWarnings.playerStats.get(target);
             if (stats != null && stats.trace != null) {
                 response.append("\n[yellow]")
-                        .append(griefWarnings.formatTrace(stats.trace) + "[]");
+                        .append(griefWarnings.formatTrace(stats.trace) + "[]\n[pink]=========================================================[]");
             }
-            reply(response.toString());
         }
+        reply(response.toString());
     }
     public void uuid(CommandContext ctx){
         String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
@@ -1052,24 +1051,33 @@ public class CommandHandler {
         if (ctx.args.size() == 3) {
             Tile tile = findTile(ctx.args.get(1), ctx.args.get(2));
             if (tile != null) {
-                Core.app.setClipboardText("``` " + "Showing actions for tile: " + griefWarnings.formatTile(tile) + " ```");
+                reply("[cyan]Showing actions for tile[cyan] " + griefWarnings.formatTile(tile));
                 Array<TileAction> actions = griefWarnings.actionLog.getActions(tile);
                 // print backwards
-                ArrayList<String> list = new ArrayList<String>();
                 for (int i = actions.size - 1; i >= 0; i--) {
-                    list.add(actions.get(i).toString());
+                    reply(actions.get(i).toString());
                 }
-                for (int a = 0; a < list.size(); a++) {
-                }
-                String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
-                Player target = getPlayer(name);
-                for (int i = actions.size - 1; i >= 0; i--) {
-                    String copygaStart = "```";
-                    Core.app.setClipboardText(copygaStart += actions.get(i).toString() + "\n"); //This doesn't work. Why???? Please fix
-                    return;
-                }
+                return;
             }
         }
+
+        String name = String.join(" ", ctx.args.subList(1, ctx.args.size()));
+        Player target = getPlayer(name);
+        if (target == null) {
+            reply("Target does not exist");
+            return;
+        }
+
+        StringBuilder actionsText = new StringBuilder("\n");
+        actionsText.append("Action log of: " + "`" + target.name + "` ");
+        actionsText.append("```diff\n");
+        Array<Action> actions = griefWarnings.actionLog.getActions(target);
+        for (int i = actions.size - 1; i >= 0 ; i--) {
+            actionsText.append(actions.get(i) + "\n");
+        }
+        actionsText.append("```");
+        Core.app.setClipboardText(actionsText.toString().replaceAll("\\[[^]]*]", "").replaceAll("Built", "+Built").replaceAll("Destroyed", "-Destroyed"));
+        replyUnlock("Copied action log");
     }
 
     /**

@@ -1,4 +1,5 @@
 logs/
+annotations/build
 /core/assets/mindustry-saves/
 /core/assets/mindustry-maps/
 /core/assets/bundles/output/
@@ -11,6 +12,7 @@ logs/
 /desktop/mindustry-maps/
 /desktop/gifexport/
 /core/lib/
+/core/build
 /ios/assets/
 /core/assets-raw/sprites/generated/
 /core/assets-raw/sprites_out/
@@ -91,6 +93,7 @@ com_crashlytics_export_strings.xml
 .loadpath
 .externalToolBuilders/
 *.launch
+.idea
 
 ## NetBeans
 
