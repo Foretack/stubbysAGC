@@ -974,7 +974,7 @@ public class CommandHandler {
             Tile tile = griefWarnings.lastalerttile;
             String playerid = "#" + griefWarnings.lastalertplayer;
 
-            if  (ctx.args.contains("p")){
+            if  (tile == null || ctx.args.contains("p")){
                 Player target = getPlayer(playerid);
                 if (target == null) {
                     reply("Target does not exist");
