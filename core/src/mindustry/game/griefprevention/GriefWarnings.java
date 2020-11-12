@@ -238,7 +238,7 @@ public class GriefWarnings {
                         if (!ipList.isEmpty() && ipList.toString().contains(target.stats.trace.ip)){
                             sendLocal("[yellow]SECURITY ALERT![] Latest join contains preexisting IP");
                         }
-                        else{
+                        else if (!target.isAdmin && target.stats.trace.ip != null){
                             ipList.add(target.stats.trace.ip);
                         }
 
@@ -485,7 +485,7 @@ public class GriefWarnings {
             String traceString = "";
             if (stats.trace != null) traceString = " \n" + formatTrace(stats.trace);
             sendLocal("[red][] " + formatPlayer(targetPlayer) );
-            if (!targetPlayer.isAdmin && ipList.contains(stats.trace.ip)){
+            if (!targetPlayer.isAdmin && targetPlayer.stats.trace.ip != null){
                 ipList.remove(stats.trace.ip);
             }
         }

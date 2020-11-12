@@ -11,11 +11,13 @@ import arc.func.Cons;
 import arc.util.Log;
 import arc.util.Strings;
 import arc.util.Strings.*;
+import mindustry.Vars;
 import mindustry.entities.type.Player;
 import mindustry.game.griefprevention.Actions.Action;
 import mindustry.game.griefprevention.Actions.TileAction;
 import mindustry.game.griefprevention.Actions.UndoResult;
 import mindustry.gen.Call;
+import mindustry.maps.Map;
 import mindustry.net.Packets.AdminAction;
 import mindustry.type.Item;
 import mindustry.world.Block;  // fuck this import
@@ -107,6 +109,7 @@ public class CommandHandler {
         addCommand("lastuuid", this::lastuuid);
         addCommand("lu", this::lastuuid);
         addCommand("clear", this::clear); //sometimes you just wanna clear chat
+        addCommand("mapinfo", this::mapinfo);
 
 
         // mods context not yet initialized here
@@ -269,6 +272,24 @@ public class CommandHandler {
     public Tile getCursorTile() {
         Vec2 vec = Core.input.mouseWorld(Core.input.mouseX(), Core.input.mouseY());
         return world.tile(world.toTile(vec.x), world.toTile(vec.y));
+    }
+
+    public void mapinfo(CommandContext ctx){
+        float calculatedMapUpTime = ((state.wave * (state.rules.waveSpacing / 60) + (state.rules.waveSpacing / 60)) / 60);
+        if (!state.rules.pvp) {
+            reply("[pink]Time between waves:[] [lime]" + state.rules.waveSpacing / 60 + " seconds[]");
+        }
+        reply("[pink]Core respawn time:[] [lime]" + state.rules.respawnTime / 60 + " seconds[]");
+        reply("[pink]Player health:[] [lime]" + state.rules.playerHealthMultiplier + "x[]");
+        reply("[pink]Player damage:[] [lime]" + state.rules.playerDamageMultiplier + "x[]");
+        reply("[pink]Banned blocks:[] " + state.rules.bannedBlocks.toString().replaceAll("[{}-]", " "));
+        reply("[pink]Build cost:[] [lime]" + state.rules.buildCostMultiplier + "x[]");
+        reply("[pink]Deconstruct refund:[] [lime]" + state.rules.deconstructRefundMultiplier + "x[]");
+        if (calculatedMapUpTime < 60) {
+            reply("[pink]Map uptime:[] [lime]" + calculatedMapUpTime + " minutes[]");
+        }else {
+            reply("[pink]Map uptime:[] [lime]" + calculatedMapUpTime / 60 + " hours[] or [lime]" + calculatedMapUpTime + " minutes[]");
+        }
     }
 
     /**
