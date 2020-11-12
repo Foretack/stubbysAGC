@@ -485,8 +485,11 @@ public class GriefWarnings {
             String traceString = "";
             if (stats.trace != null) traceString = " \n" + formatTrace(stats.trace);
             sendLocal("[red][] " + formatPlayer(targetPlayer) );
-            if (!targetPlayer.isAdmin && targetPlayer.stats.trace.ip != null){
+            //if (!targetPlayer.isAdmin && targetPlayer.stats.trace.ip != null){
+            try {
                 ipList.remove(stats.trace.ip);
+            } catch (Exception e) {
+                sendLocal("[red]ALERT![] IP error ");
             }
         }
     }

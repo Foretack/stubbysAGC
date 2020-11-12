@@ -973,12 +973,8 @@ public class CommandHandler {
     public void lastalert(CommandContext ctx) {
             Tile tile = griefWarnings.lastalerttile;
             String playerid = "#" + griefWarnings.lastalertplayer;
-            if (tile != null) {
-                reply("[cyan]Showing tile[] " + griefWarnings.formatTile(tile));
-                griefWarnings.auto.setFreecam(true, tile.getX(), tile.getY());
-                return;
-            }
-            else {
+
+            if  (ctx.args.contains("p")){
                 Player target = getPlayer(playerid);
                 if (target == null) {
                     reply("Target does not exist");
@@ -986,6 +982,11 @@ public class CommandHandler {
                 }
                 reply("[cyan]Showing player[] " + griefWarnings.formatPlayer(target));
                 griefWarnings.auto.setFreecam(true, target.x, target.y);
+            }
+            else if (tile != null) {
+                reply("[cyan]Showing tile[] " + griefWarnings.formatTile(tile));
+                griefWarnings.auto.setFreecam(true, tile.getX(), tile.getY());
+                return;
             }
     }
     public void blacklist(CommandContext ctx){
