@@ -486,10 +486,12 @@ public class GriefWarnings {
             if (stats.trace != null) traceString = " \n" + formatTrace(stats.trace);
             sendLocal("[red][] " + formatPlayer(targetPlayer) );
             //if (!targetPlayer.isAdmin && targetPlayer.stats.trace.ip != null){
-            try {
-                ipList.remove(stats.trace.ip);
-            } catch (Exception e) {
-                sendLocal("[red]ALERT![] IP error ");
+            if (!targetPlayer.isAdmin) {
+                try {
+                    ipList.remove(stats.trace.ip);
+                } catch (Exception e) {
+                    sendLocal("[red]ALERT![] IP error ");
+                }
             }
         }
     }
