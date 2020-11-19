@@ -143,9 +143,7 @@ public class GriefWarnings {
     }
     public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
     public void replyAlert(String message){ ui.showInfo(message);}
-    public void sendLocal(String message) {
-        ui.chatfrag.addMessage(message, null);
-    }
+    public void sendLocal(String message) { ui.chatfrag.addMessage(message, null); }
 
     public float getDistanceToCore(Unit unit, float x, float y) {
         TileEntity nearestCoreEntity = unit.getClosestCore();
@@ -236,7 +234,7 @@ public class GriefWarnings {
                         }
 
                         if (!ipList.isEmpty() && ipList.toString().contains(target.stats.trace.ip)){
-                            sendLocal("[yellow]SECURITY ALERT![] Latest join contains preexisting IP");
+                            sendLocal("[purple]SECURITY ALERT![] Latest join contains preexisting IP");
                         }
                         else if (!target.isAdmin && target.stats.trace.ip != null){
                             ipList.add(target.stats.trace.ip);
@@ -490,7 +488,7 @@ public class GriefWarnings {
                 try {
                     ipList.remove(stats.trace.ip);
                 } catch (Exception e) {
-                    sendLocal("[red]ALERT![] IP error ");
+                    sendLocal("[red][] error removing IP");
                 }
             }
         }

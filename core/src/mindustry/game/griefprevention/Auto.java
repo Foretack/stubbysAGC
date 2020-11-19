@@ -294,7 +294,7 @@ public class Auto {
                 player.isBoosting = false;
                 cancelMovement();
             }
-        } else if (!Core.input.keyDown(Binding.suspend_movement)) { // allow suspend of movement by holding down key
+        } else {
             player.isBoosting = true;
             movement.set(
                     (targetX - player.x) / Time.delta(),
@@ -303,6 +303,12 @@ public class Auto {
             movement.setAngle(Mathf.slerp(movement.angle(), velocity.angle(), 0.05f));
             velocity.add(movement.scl(Time.delta()));
             movementControlled = true;
+        }
+        //stop all auto actions with one press
+        if (Core.input.keyTap(Binding.suspend_movement)){
+            movement.setZero();
+            player.isBoosting = false;
+            reset();
         }
 
         shootControlled = false;
@@ -384,6 +390,13 @@ public class Auto {
     public void updateControls() {
         if (Core.scene.hasKeyboard()) return;
         if (Core.input.keyTap(Binding.freecam)) setFreecam(!freecam);
+        Tile tile = griefWarnings.lastalerttile;
+        if (Core.input.keyTap(Binding.last_alert) && tile != null) setFreecam(true, tile.getX(), tile.getY());
+        if (Core.input.keyTap(Binding.goto_waypoint)){
+            gotoTile(CommandHandler.waypoint, persist ? 0f : 1f);
+            persist = true;
+            ui.chatfrag.addMessage("[slate]persisting on tile[] " + griefWarnings.formatTile(CommandHandler.waypoint), null);
+        }
     }
 
     /** Perform necessary cleanup after stopping */

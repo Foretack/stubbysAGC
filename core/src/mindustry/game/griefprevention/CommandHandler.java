@@ -4,20 +4,13 @@ import arc.Core;
 import arc.math.geom.Vec2;
 import arc.struct.Array;
 
-import java.time.Instant;
-import java.util.ArrayList;
-
 import arc.func.Cons;
 import arc.util.Log;
-import arc.util.Strings;
-import arc.util.Strings.*;
-import mindustry.Vars;
 import mindustry.entities.type.Player;
 import mindustry.game.griefprevention.Actions.Action;
 import mindustry.game.griefprevention.Actions.TileAction;
 import mindustry.game.griefprevention.Actions.UndoResult;
 import mindustry.gen.Call;
-import mindustry.maps.Map;
 import mindustry.net.Packets.AdminAction;
 import mindustry.type.Item;
 import mindustry.world.Block;  // fuck this import
@@ -29,7 +22,6 @@ import mindustry.entities.traits.BuilderTrait.BuildRequest; //FUCK EVERYTHING
 import mindustry.world.Tile;
 import mindustry.world.blocks.BlockPart;
 import org.mozilla.javascript.*;
-import sun.rmi.transport.Target;
 
 import static mindustry.Vars.*;
 
@@ -49,7 +41,6 @@ public class CommandHandler {
         }
     }
 
-    private Instant nextRunTime = Instant.now();
     public ContextFactory scriptContextFactory = new ContextFactory();
     public Context scriptContext;
     public Scriptable scriptScope;
@@ -110,6 +101,7 @@ public class CommandHandler {
         addCommand("lu", this::lastuuid);
         addCommand("clear", this::clear); //sometimes you just wanna clear chat
         addCommand("mapinfo", this::mapinfo);
+        addCommand("waypoint", this::waypoint);
 
 
         // mods context not yet initialized here
@@ -160,6 +152,13 @@ public class CommandHandler {
     public void replyUnlock(String message){ ui.hudfrag.showToast(message);}
     public void areAlertsMuted(String message){ ui.hudfrag.setHudText(message);}
     public void clear(boolean clear){ui.chatfrag.clearMessages();}
+
+    public static Tile waypoint;
+
+    public static String easyIdenify(String text){
+    String out = text.replaceAll("\\[[^]]*]", "").replaceAll("[\uE800\uE813\uE809\uE80F\uE814\uE828]", "").trim().toLowerCase();
+    return out;
+    }
 
     public boolean runCommand(String message) {
         if (!message.startsWith("/")) return false;
@@ -470,7 +469,8 @@ public class CommandHandler {
                 }
                 target = playerGroup.getByID(id);
             } else {
-                target = playerGroup.find(p -> p.name.replaceAll("\\[[^]]*]", "").replaceAll("[\uE800\uE813\uE809\uE80F\uE814\uE828]", "").trim().toLowerCase().startsWith(((name))));
+                target = playerGroup.find(p -> easyIdenify(p.name).startsWith(((name))));
+
             }
         return target;
     }
@@ -514,7 +514,7 @@ public class CommandHandler {
                 }
             } else {
                 for (Entry<Player, PlayerStats> e : griefWarnings.playerStats.entrySet()) {
-                    if (e.getKey().name.replaceAll("\\[[^]]*]", "").replaceAll("[\uE800\uE813\uE809\uE80F\uE814\uE828]", "").trim().toLowerCase().startsWith(name)) return e.getValue();
+                    if (easyIdenify(e.getKey().name).startsWith(name)) return e.getValue();
                 }
             }
         return null;
@@ -898,6 +898,12 @@ public class CommandHandler {
                 auto.persist = persist;
                 reply("[cyan]going to tile[] " + griefWarnings.formatTile(tile));
                 break;
+            } else if (ctx.args.contains("wp") || ctx.args.contains("waypoint")){
+                Tile tile = waypoint;
+                auto.gotoTile(tile, persist ? 0f : 50f);
+                auto.persist = persist;
+                reply("[cyan]going to tile[] " + griefWarnings.formatTile(tile));
+                break;
             }
             else {
                 Tile tile = getCursorTile();
@@ -914,6 +920,11 @@ public class CommandHandler {
         default:
             reply("unknown subcommand");
         }
+    }
+
+    public void waypoint(CommandContext ctx){
+        waypoint = getCursorTile();
+        replyUnlock("Set waypoint\n (" + getCursorTile().getX() + ", " + getCursorTile().getY() + ")");
     }
 
     public void nextwave(CommandContext ctx) {
