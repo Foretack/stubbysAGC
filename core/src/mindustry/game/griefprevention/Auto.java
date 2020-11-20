@@ -391,7 +391,12 @@ public class Auto {
         if (Core.scene.hasKeyboard()) return;
         if (Core.input.keyTap(Binding.freecam)) setFreecam(!freecam);
         Tile tile = griefWarnings.lastalerttile;
-        if (Core.input.keyTap(Binding.last_alert) && tile != null) setFreecam(true, tile.getX(), tile.getY());
+        int playerid = griefWarnings.lastalertplayer;
+        Player target = playerGroup.getByID(playerid);
+        if (Core.input.keyTap(Binding.last_alert)) {
+            if (tile == null && target != null) { griefWarnings.auto.setFreecam(true, target.x, target.y); }
+            else if (tile != null) { griefWarnings.auto.setFreecam(true, tile.getX(), tile.getY()); }
+        }
         if (Core.input.keyTap(Binding.goto_waypoint)){
             gotoTile(CommandHandler.waypoint, persist ? 0f : 1f);
             persist = true;
